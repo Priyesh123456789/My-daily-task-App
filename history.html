@@ -3,93 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Daily Tasks</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="index.css">
+    <title>Daily Task History</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="index.css"> 
+    <style>
+        /* Specific styles for history.html to make it clean and readable */
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            padding: 20px;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 20px auto;
+            box-shadow: var(--shadow);
+            border-radius: var(--border-radius);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .dark-mode body {
+            background-color: var(--dark-bg-medium);
+            color: var(--dark-text-light);
+            box-shadow: var(--dark-shadow);
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dark-mode h1, .dark-mode h2, .dark-mode h3, .dark-mode h4 {
+            color: var(--dark-primary-color);
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .dark-mode .header-section {
+            border-bottom-color: var(--dark-border-color);
+        }
+
+        .personalized-message {
+            font-style: italic;
+            color: #555;
+            margin-top: 10px;
+            font-size: 1.1em;
+        }
+        .dark-mode .personalized-message {
+            color: #bbb;
+        }
+
+        .section-divider {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 20px;
+        }
+        .dark-mode .section-divider {
+            border-top-color: var(--dark-border-color);
+        }
+
+        .task-category-item {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            border: 1px solid #c0ddef;
+        }
+        .dark-mode .task-category-item {
+            background-color: var(--dark-bg-category);
+            border-color: var(--dark-border-color);
+        }
+
+        .task-category-item h4 {
+            color: var(--secondary-color);
+            border-bottom: 1px dashed #a7d9f7;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+        .dark-mode .task-category-item h4 {
+            color: var(--dark-secondary-color);
+            border-bottom-color: var(--dark-border-color);
+        }
+
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .task-list li {
+            background-color: #ffffff;
+            border: 1px solid #dcdcdc;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .dark-mode .task-list li {
+            background-color: var(--dark-element-bg);
+            border-color: var(--dark-border-color);
+            color: var(--dark-text-light);
+        }
+
+        .task-list li.completed {
+            text-decoration: line-through;
+            color: #888;
+            background-color: #e6ffe6;
+        }
+        .dark-mode .task-list li.completed {
+            color: #a0a0a0;
+            background-color: #2e4c34; /* Darker green for completed */
+        }
+
+
+        .day-review-section {
+            background-color: #e0f2f7;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            border: 1px solid #bbdefb;
+        }
+        .dark-mode .day-review-section {
+            background-color: var(--dark-bg-review);
+            border-color: var(--dark-border-color);
+        }
+
+        .day-review-section p {
+            margin-bottom: 10px;
+        }
+
+        .no-data {
+            text-align: center;
+            font-size: 1.2em;
+            color: #777;
+            margin-top: 50px;
+        }
+        .dark-mode .no-data {
+            color: #bbb;
+        }
+
+        .back-button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .back-button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #1976D2;
+        }
+
+        @media print {
+            body {
+                box-shadow: none;
+                max-width: 100%;
+                margin: 0;
+                padding: 10px;
+                background-color: white; /* Force white background for printing */
+                color: black;
+            }
+            .dark-mode body {
+                background-color: white !important;
+                color: black !important;
+            }
+            .dark-mode h1, .dark-mode h2, .dark-mode h3, .dark-mode h4 {
+                color: black !important;
+            }
+            .dark-mode .personalized-message, .dark-mode .task-list li.completed {
+                color: #555 !important;
+            }
+            .dark-mode .task-category-item, .dark-mode .task-list li, .dark-mode .day-review-section {
+                background-color: #f0f0f0 !important;
+                border-color: #ccc !important;
+            }
+            .back-button-container {
+                display: none; /* Hide back button when printing */
+            }
+            header, .mobile-nav-buttons, aside { /* Hide main app elements if accidentally printed */
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body class="light-mode">
-    <header>
-        <div id="motivation-line"></div>
-        <button id="darkModeToggle" class="mode-toggle-btn"><i class="fas fa-moon"></i> Dark Mode</button>
-        <div class="mobile-nav-buttons">
-            <button id="toggleNewsBtn" class="mobile-nav-btn"><i class="fas fa-newspaper"></i> News</button>
-            <button id="toggleCalendarBtn" class="mobile-nav-btn"><i class="fas fa-calendar-alt"></i> Calendar</button>
-        </div>
-    </header>
+    <div id="history-details">
+        <h1 id="historyDate" class="header-section"></h1> 
+        <p class="no-data">Loading history...</p>
+    </div>
 
-    <main>
-        <aside id="daily-news-section" class="sidebar">
-            <h2>Daily Important News</h2>
-            <div id="news-content">
-                <p>Loading news...</p>
-            </div>
-        </aside>
+    <div class="back-button-container">
+        <a href="index.html" class="back-button"><i class="fas fa-arrow-left"></i> Back to Main App</a>
+    </div>
 
-        <section id="task-management">
-            <h1><i class="fas fa-clipboard-list"></i> Today's Tasks</h1>
-            
-            <div class="task-add-section">
-                <input type="text" id="newTaskInput" placeholder="Add a new task...">
-                <select id="taskCategorySelect">
-                    <option value="study">Study</option>
-                    <option value="homework">Home Work</option>
-                </select>
-                <button id="addTaskBtn"><i class="fas fa-plus-circle"></i> Add Task</button>
-            </div>
-
-            <div class="task-categories">
-                <h3>Most Important Work</h3>
-                
-                <div class="task-category-item">
-                    <h4><i class="fas fa-book-reader"></i> Study</h4>
-                    <ul id="study-tasks" class="task-list"></ul>
-                </div>
-                
-                <div class="task-category-item">
-                    <h4><i class="fas fa-home"></i> Home Work</h4>
-                    <ul id="homework-tasks" class="task-list"></ul>
-                </div>
-
-                <div class="task-category-item custom-category-creator">
-                    <h4><i class="fas fa-boxes"></i> Custom Categories</h4>
-                    <div class="custom-category-input-group">
-                        <input type="text" id="customCategoryInput" placeholder="New custom category name">
-                        <button id="addCustomCategoryBtn"><i class="fas fa-folder-plus"></i> Add Category</button>
-                    </div>
-                    <div id="custom-task-sections">
-                    </div>
-                </div>
-            </div>
-
-            <div class="all-tasks-section">
-                <h3><i class="fas fa-tasks"></i> All Daily Tasks Overview</h3>
-                <ul id="all-daily-tasks" class="task-list"></ul>
-            </div>
-
-            <div class="day-review">
-                <h3><i class="fas fa-star"></i> Day Review</h3>
-                <textarea id="weakness-improvement" placeholder="What went well? What needs improvement? (Weakness & Improvement)..."></textarea>
-                <div class="rating-section">
-                    <label for="day-rating">Rate your day (1-5):</label>
-                    <input type="number" id="day-rating" min="1" max="5" value="3">
-                </div>
-                <button id="saveDayReviewBtn"><i class="fas fa-save"></i> Save Day Review</button>
-            </div>
-        </section>
-
-        <aside id="calendar-history-section" class="sidebar">
-            <h2><i class="fas fa-calendar-day"></i> Live Calendar & History</h2>
-            <div id="calendar"></div>
-            <div id="history-content">
-                <h3>Previous Day's History</h3>
-                <div id="selected-day-history">
-                    <p>Select a date to view history.</p>
-                </div>
-            </div>
-        </aside>
-    </main>
-
-    <script src="index.js"></script>
-    <script src="history.html"></script>
+    <script src="history.js"></script>
 </body>
 </html>
