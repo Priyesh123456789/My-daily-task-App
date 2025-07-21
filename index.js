@@ -467,15 +467,25 @@ document.addEventListener('DOMContentLoaded', () => {
         window.open('history.html', '_blank'); // Open in a new tab/window
     }
 
-    // --- Mobile Responsiveness Toggling ---
-    toggleNewsBtn.addEventListener('click', () => {
-        dailyNewsSection.classList.toggle('hidden-mobile');
-        calendarHistorySection.classList.add('hidden-mobile');
-    });
+    // --- Dark Mode Logic ---
+    const currentMode = localStorage.getItem('theme') || 'light';
+    if (currentMode === 'dark') {
+        body.classList.add('dark-mode');
+        darkModeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+    } else {
+        body.classList.remove('dark-mode');
+        darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+    }
 
-    toggleCalendarBtn.addEventListener('click', () => {
-        calendarHistorySection.classList.toggle('hidden-mobile');
-        dailyNewsSection.classList.add('hidden-mobile');
+    darkModeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'dark');
+            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+        } else {
+            localStorage.setItem('theme', 'light');
+            darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+        }
     });
 
     // Initial renders
