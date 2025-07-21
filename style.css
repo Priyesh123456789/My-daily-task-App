@@ -303,9 +303,15 @@ aside.sidebar {
     transition: background-color 0.3s, box-shadow 0.3s;
 }
 
-aside.sidebar.hidden-mobile {
-    display: none;
+/* --- IMPORTANT CHANGE HERE --- */
+/* Initially hide sidebars on smaller screens, unless a button makes them visible */
+@media (max-width: 1024px) {
+    aside.sidebar:not(.visible-mobile) {
+        display: none;
+    }
 }
+/* --- END IMPORTANT CHANGE --- */
+
 
 section#task-management {
     background-color: var(--element-bg);
@@ -736,10 +742,35 @@ h1, h2, h3, h4 {
         display: flex;
     }
 
+    /* OLD CODE:
     #daily-news-section, #calendar-history-section {
         display: none;
     }
+    */
+    /* NEW CODE to replace the OLD CODE above */
+    aside.sidebar:not(.visible-mobile) {
+        display: none;
+    }
 }
+
+/* --- IMPORTANT NEW CSS RULE TO ADD AT THE END OF THE FILE --- */
+/* New CSS rule to make sidebar visible when toggled on mobile */
+aside.sidebar.visible-mobile {
+    display: flex !important; /* Force display flex when active */
+    position: fixed; /* Keep it in place */
+    top: 0; /* Or header height + margin (e.g., if header is 60px, top: 70px;) */
+    right: 0;
+    width: 80%; /* Take up most of the screen */
+    height: 100vh; /* Full height */
+    z-index: 1000; /* Ensure it's on top of other content */
+    padding-top: 80px; /* Adjust this value if your header is taller, to avoid content hiding behind header */
+    box-sizing: border-box; /* Include padding in width/height */
+    overflow-y: auto; /* Enable scrolling if content overflows */
+    left: auto; /* Ensure it sticks to the right */
+    flex-direction: column; /* Ensure content stacks vertically */
+}
+/* --- END OF IMPORTANT NEW CSS RULE --- */
+
 
 @media (max-width: 768px) {
     body {
