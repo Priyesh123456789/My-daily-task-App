@@ -467,25 +467,15 @@ document.addEventListener('DOMContentLoaded', () => {
         window.open('history.html', '_blank'); // Open in a new tab/window
     }
 
-    // --- Dark Mode Logic ---
-    const currentMode = localStorage.getItem('theme') || 'light';
-    if (currentMode === 'dark') {
-        body.classList.add('dark-mode');
-        darkModeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
-    } else {
-        body.classList.remove('dark-mode');
-        darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
-    }
+    // --- Mobile Responsiveness Toggling ---
+    toggleNewsBtn.addEventListener('click', () => {
+        dailyNewsSection.classList.toggle('visible-mobile'); // Use visible-mobile
+        calendarHistorySection.classList.remove('visible-mobile'); // Remove from other sidebar
+    });
 
-    darkModeToggle.addEventListener('click', () => {
-        body.classList.toggle('dark-mode');
-        if (body.classList.contains('dark-mode')) {
-            localStorage.setItem('theme', 'dark');
-            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
-        } else {
-            localStorage.setItem('theme', 'light');
-            darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
-        }
+    toggleCalendarBtn.addEventListener('click', () => {
+        calendarHistorySection.classList.toggle('visible-mobile'); // Use visible-mobile
+        dailyNewsSection.classList.remove('visible-mobile'); // Remove from other sidebar
     });
 
     // Initial renders
