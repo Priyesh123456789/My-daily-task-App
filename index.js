@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Get references to elements
     const motivationLine = document.getElementById('motivation-line');
     const newsContent = document.getElementById('news-content');
     const newTaskInput = document.getElementById('newTaskInput');
@@ -21,6 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const calendarHistorySection = document.getElementById('calendar-history-section');
     const darkModeToggle = document.getElementById('darkModeToggle');
     const body = document.body;
+
+    // New: Get references for close buttons
+    const closeNewsBtn = document.getElementById('closeNewsBtn');
+    const closeCalendarBtn = document.getElementById('closeCalendarBtn');
 
     // --- User Name Prompt ---
     let userName = localStorage.getItem('userName');
@@ -468,15 +473,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Mobile Responsiveness Toggling ---
-    toggleNewsBtn.addEventListener('click', () => {
-        dailyNewsSection.classList.toggle('visible-mobile'); // Use visible-mobile
-        calendarHistorySection.classList.remove('visible-mobile'); // Remove from other sidebar
-    });
+    // Added null checks to ensure elements exist before adding listeners
+    if (toggleNewsBtn && dailyNewsSection && calendarHistorySection) {
+        toggleNewsBtn.addEventListener('click', () => {
+            dailyNewsSection.classList.toggle('visible-mobile');
+            calendarHistorySection.classList.remove('visible-mobile');
+        });
+    }
 
-    toggleCalendarBtn.addEventListener('click', () => {
-        calendarHistorySection.classList.toggle('visible-mobile'); // Use visible-mobile
-        dailyNewsSection.classList.remove('visible-mobile'); // Remove from other sidebar
-    });
+    if (toggleCalendarBtn && dailyNewsSection && calendarHistorySection) {
+        toggleCalendarBtn.addEventListener('click', () => {
+            calendarHistorySection.classList.toggle('visible-mobile');
+            dailyNewsSection.classList.remove('visible-mobile');
+        });
+    }
+
+    // New: Event listeners for close buttons
+    if (closeNewsBtn && dailyNewsSection) {
+        closeNewsBtn.addEventListener('click', () => {
+            dailyNewsSection.classList.remove('visible-mobile');
+        });
+    }
+
+    if (closeCalendarBtn && calendarHistorySection) {
+        closeCalendarBtn.addEventListener('click', () => {
+            calendarHistorySection.classList.remove('visible-mobile');
+        });
+    }
 
     // Initial renders
     populateCategorySelect();
