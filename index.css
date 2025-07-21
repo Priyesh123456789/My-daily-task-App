@@ -381,7 +381,7 @@ body.dark-mode aside.sidebar.visible-mobile {
 .close-btn {
     background: none;
     border: none;
-    color: var(--text-light); /* Header text color for dark background */
+    color: #dc3545; /* लाल रंग के लिए: RED color for close button */
     font-size: 1.5em;
     cursor: pointer;
     float: right; /* To position it to the right within the heading */
@@ -392,11 +392,15 @@ body.dark-mode aside.sidebar.visible-mobile {
 }
 
 .close-btn:hover {
-    color: #ccc;
+    color: #c82333; /* गहरा लाल रंग जब माउस ऊपर हो */
 }
 
+/* Dark mode में भी लाल रंग सुनिश्चित करें */
 body.dark-mode .close-btn {
-    color: var(--dark-text-light);
+    color: #cc4f4f; /* Dark mode के लिए थोड़ा हल्का लाल */
+}
+body.dark-mode .close-btn:hover {
+    color: #b73e3e; /* Dark mode में गहरा लाल */
 }
 /* --- END OF NEW CSS FOR CLOSE BUTTONS --- */
 
