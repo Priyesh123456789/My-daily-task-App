@@ -1,4 +1,5 @@
 :root {
+    /* Light Mode Variables */
     --primary-color: #4CAF50; /* Green */
     --secondary-color: #2196F3; /* Blue */
     --accent-color: #FFC107; /* Amber */
@@ -6,10 +7,30 @@
     --text-light: #f4f7f6;
     --bg-light: #f4f7f6;
     --bg-medium: #e8f5e9; /* Light green for sections */
-    --bg-dark: #2c3e50; /* Dark blue-gray */
+    --bg-dark: #2c3e50; /* Dark blue-gray for header */
     --border-color: #ddd;
     --shadow: 0 4px 10px rgba(0,0,0,0.08);
     --border-radius: 8px;
+    --element-bg: #ffffff; /* Default background for cards/elements */
+    --bg-category: #e3f2fd; /* Light blue for category cards */
+    --bg-review: #e0f2f7; /* Light blue for review section */
+    --bg-all-tasks: #fffde7; /* Light yellow for all tasks */
+
+    /* Dark Mode Variables */
+    --dark-primary-color: #81C784; /* Lighter green */
+    --dark-secondary-color: #64B5F6; /* Lighter blue */
+    --dark-accent-color: #FFD54F; /* Lighter amber */
+    --dark-text-dark: #eee;
+    --dark-text-light: #fff;
+    --dark-bg-light: #121212; /* Very dark background */
+    --dark-bg-medium: #1e1e1e; /* Slightly lighter dark background */
+    --dark-bg-dark: #2b2b2b; /* Darker header/main section */
+    --dark-border-color: #444;
+    --dark-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    --dark-element-bg: #2a2a2a; /* Dark background for cards/elements */
+    --dark-bg-category: #2e3b4e; /* Darker blue for category cards */
+    --dark-bg-review: #2e3b4e; /* Darker blue for review section */
+    --dark-bg-all-tasks: #3e3a2e; /* Darker yellow for all tasks */
 }
 
 body {
@@ -21,8 +42,162 @@ body {
     flex-direction: column;
     min-height: 100vh;
     color: var(--text-dark);
+    transition: background-color 0.3s, color 0.3s;
 }
 
+/* Dark Mode specific styles */
+body.dark-mode {
+    background-color: var(--dark-bg-light);
+    color: var(--dark-text-dark);
+}
+
+body.dark-mode header {
+    background-color: var(--dark-bg-dark);
+    box-shadow: var(--dark-shadow);
+}
+
+body.dark-mode .mobile-nav-buttons {
+    background-color: #383838;
+}
+body.dark-mode .mobile-nav-btn {
+    background-color: var(--dark-secondary-color);
+    color: var(--dark-text-light);
+}
+body.dark-mode .mobile-nav-btn:hover {
+    background-color: #5b9bd7;
+}
+
+body.dark-mode aside.sidebar {
+    background-color: var(--dark-bg-medium);
+    box-shadow: var(--dark-shadow);
+}
+
+body.dark-mode section#task-management {
+    background-color: var(--dark-element-bg);
+    box-shadow: var(--dark-shadow);
+}
+
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, body.dark-mode h4 {
+    color: var(--dark-text-dark);
+}
+
+body.dark-mode .task-add-section input[type="text"],
+body.dark-mode .task-add-section select,
+body.dark-mode .custom-category-creator .custom-category-input-group input,
+body.dark-mode .day-review textarea,
+body.dark-mode .rating-section input[type="number"] {
+    background-color: var(--dark-bg-medium);
+    border-color: var(--dark-border-color);
+    color: var(--dark-text-dark);
+}
+
+body.dark-mode .task-add-section button {
+    background-color: var(--dark-primary-color);
+}
+body.dark-mode .task-add-section button:hover {
+    background-color: #72af75;
+}
+
+body.dark-mode .task-category-item {
+    background-color: var(--dark-bg-category);
+    border-color: var(--dark-border-color);
+}
+body.dark-mode .task-category-item h4 {
+    color: var(--dark-secondary-color);
+    border-bottom-color: var(--dark-border-color);
+}
+
+body.dark-mode .task-list li {
+    background-color: var(--dark-element-bg);
+    border-color: var(--dark-border-color);
+}
+
+body.dark-mode .task-list li.completed {
+    background-color: #3a3a3a;
+    color: #a0a0a0;
+    border-color: #555;
+}
+
+body.dark-mode .task-actions button {
+    background-color: #cc4f4f; /* Lighter red for dark mode */
+}
+body.dark-mode .task-actions button:hover {
+    background-color: #b73e3e;
+}
+
+body.dark-mode .custom-category-creator .custom-category-input-group button {
+    background-color: var(--dark-secondary-color);
+}
+body.dark-mode .custom-category-creator .custom-category-input-group button:hover {
+    background-color: #5b9bd7;
+}
+
+body.dark-mode .all-tasks-section {
+    background-color: var(--dark-bg-all-tasks);
+    border-color: var(--dark-accent-color);
+}
+body.dark-mode .all-tasks-section h3 {
+    color: var(--dark-accent-color);
+}
+
+body.dark-mode .day-review {
+    background-color: var(--dark-bg-review);
+    border-color: var(--dark-border-color);
+}
+body.dark-mode .day-review button {
+    background-color: var(--dark-primary-color);
+}
+body.dark-mode .day-review button:hover {
+    background-color: #72af75;
+}
+
+body.dark-mode #calendar {
+    background-color: var(--dark-element-bg);
+    border-color: var(--dark-border-color);
+}
+body.dark-mode #calendar th, body.dark-mode #calendar td {
+    border-color: #3a3a3a;
+    color: var(--dark-text-dark);
+}
+body.dark-mode #calendar th {
+    background-color: #333;
+}
+body.dark-mode #calendar td.today {
+    background-color: var(--dark-accent-color);
+    color: var(--text-dark); /* Keep dark text for today */
+}
+body.dark-mode #calendar td.has-history {
+    background-color: #4CAF50; /* Original primary for history in dark mode */
+    color: var(--text-light);
+}
+body.dark-mode #calendar td.selected-day {
+    background-color: var(--dark-secondary-color);
+    color: var(--dark-text-light);
+}
+body.dark-mode #calendar-header span {
+    color: var(--dark-secondary-color);
+}
+body.dark-mode #calendar-header button {
+    color: var(--dark-secondary-color);
+}
+
+body.dark-mode #history-content {
+    background-color: var(--dark-element-bg);
+    border-color: var(--dark-border-color);
+}
+body.dark-mode #history-content h3 {
+    color: var(--dark-secondary-color);
+    border-bottom-color: var(--dark-border-color);
+}
+body.dark-mode #selected-day-history ul li::before {
+    color: var(--dark-primary-color);
+}
+body.dark-mode #selected-day-history ul li {
+    color: var(--dark-text-dark);
+}
+
+
+/* General Styles (applies to both modes unless overridden) */
 header {
     background-color: var(--bg-dark);
     color: var(--text-light);
@@ -31,14 +206,19 @@ header {
     position: relative;
     overflow: hidden;
     box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #motivation-line {
     font-size: 1.2em;
     font-style: italic;
     white-space: nowrap;
-    animation: marquee 25s linear infinite; /* Slower marquee */
+    animation: marquee 25s linear infinite;
     padding: 5px 20px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 @keyframes marquee {
@@ -46,13 +226,41 @@ header {
     100% { transform: translateX(-100%); }
 }
 
+.mode-toggle-btn {
+    background-color: #607d8b; /* Blue-grey */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+.mode-toggle-btn:hover {
+    background-color: #455a64;
+}
+.dark-mode .mode-toggle-btn {
+    background-color: #4a4a4a;
+}
+.dark-mode .mode-toggle-btn:hover {
+    background-color: #616161;
+}
+
+
 /* Mobile Navigation Buttons */
 .mobile-nav-buttons {
     display: none; /* Hidden by default, shown on mobile */
     justify-content: space-around;
     padding: 10px;
-    background-color: #3f51b5; /* Slightly different background for nav */
+    background-color: #3f51b5;
     box-shadow: var(--shadow);
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 10px;
 }
 
 .mobile-nav-btn {
@@ -79,7 +287,7 @@ main {
     flex: 1;
     padding: 20px;
     gap: 20px;
-    flex-wrap: wrap; /* Allows wrapping on smaller screens */
+    flex-wrap: wrap;
     justify-content: center;
 }
 
@@ -88,23 +296,31 @@ aside.sidebar {
     padding: 20px;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
-    flex: 0 0 28%; /* Adjusted width for sidebars */
+    flex: 0 0 28%;
     max-width: 28%;
     display: flex;
     flex-direction: column;
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
-aside.sidebar.hidden-mobile {
-    display: none; /* For mobile toggling */
+/* --- IMPORTANT CHANGE HERE --- */
+/* Initially hide sidebars on smaller screens, unless a button makes them visible */
+@media (max-width: 1024px) {
+    aside.sidebar:not(.visible-mobile) {
+        display: none;
+    }
 }
+/* --- END IMPORTANT CHANGE --- */
+
 
 section#task-management {
-    background-color: #ffffff;
+    background-color: var(--element-bg);
     padding: 25px;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
-    flex: 1; /* Takes remaining space */
-    min-width: 400px; /* Minimum width before wrapping */
+    flex: 1;
+    min-width: 400px;
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 h1, h2, h3, h4 {
@@ -114,13 +330,14 @@ h1, h2, h3, h4 {
     align-items: center;
     gap: 10px;
     margin-bottom: 15px;
+    transition: color 0.3s;
 }
 
 .task-add-section {
     display: flex;
     gap: 10px;
     margin-bottom: 25px;
-    flex-wrap: wrap; /* Allows wrapping inputs on small screens */
+    flex-wrap: wrap;
 }
 
 .task-add-section input[type="text"],
@@ -130,7 +347,8 @@ h1, h2, h3, h4 {
     border: 1px solid var(--border-color);
     border-radius: 5px;
     font-size: 1em;
-    min-width: 150px; /* Ensure inputs don't get too small */
+    min-width: 150px;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
 }
 
 .task-add-section button {
@@ -148,7 +366,7 @@ h1, h2, h3, h4 {
 }
 
 .task-add-section button:hover {
-    background-color: #43A047; /* Darker green */
+    background-color: #43A047;
 }
 
 .task-categories {
@@ -156,12 +374,13 @@ h1, h2, h3, h4 {
 }
 
 .task-category-item {
-    background-color: #e3f2fd; /* Light blue for category cards */
+    background-color: var(--bg-category);
     padding: 15px;
     border-radius: var(--border-radius);
     margin-bottom: 15px;
     border: 1px solid #c0ddef;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
 .task-category-item h4 {
@@ -169,6 +388,7 @@ h1, h2, h3, h4 {
     border-bottom: 1px dashed var(--border-color);
     padding-bottom: 10px;
     margin-bottom: 10px;
+    transition: color 0.3s, border-bottom-color 0.3s;
 }
 
 .task-list {
@@ -178,7 +398,7 @@ h1, h2, h3, h4 {
 }
 
 .task-list li {
-    background-color: #ffffff;
+    background-color: var(--element-bg);
     border: 1px solid #dcdcdc;
     padding: 10px 15px;
     margin-bottom: 8px;
@@ -186,7 +406,7 @@ h1, h2, h3, h4 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, color 0.3s, border-color 0.3s;
 }
 
 .task-list li:hover {
@@ -209,7 +429,7 @@ h1, h2, h3, h4 {
 .task-list li.completed {
     text-decoration: line-through;
     color: #888;
-    background-color: #e6ffe6; /* Very light green for completed */
+    background-color: #e6ffe6;
     border-color: #a5d6a7;
 }
 
@@ -219,7 +439,7 @@ h1, h2, h3, h4 {
 }
 
 .task-actions button {
-    background-color: #dc3545; /* Red */
+    background-color: #dc3545;
     color: white;
     border: none;
     padding: 6px 10px;
@@ -230,13 +450,14 @@ h1, h2, h3, h4 {
 }
 
 .task-actions button:hover {
-    background-color: #c82333; /* Darker red */
+    background-color: #c82333;
 }
 
 .custom-category-creator .custom-category-input-group {
     display: flex;
     gap: 10px;
     margin-bottom: 15px;
+    flex-wrap: wrap;
 }
 
 .custom-category-creator .custom-category-input-group input {
@@ -244,6 +465,7 @@ h1, h2, h3, h4 {
     padding: 10px;
     border: 1px solid var(--border-color);
     border-radius: 5px;
+    min-width: 150px;
 }
 
 .custom-category-creator .custom-category-input-group button {
@@ -264,24 +486,27 @@ h1, h2, h3, h4 {
 }
 
 .all-tasks-section {
-    background-color: #fffde7; /* Light yellow */
+    background-color: var(--bg-all-tasks);
     padding: 15px;
     border-radius: var(--border-radius);
     margin-bottom: 30px;
     border: 1px solid #ffe082;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
 .all-tasks-section h3 {
-    color: #FBC02D; /* Darker yellow */
+    color: #FBC02D;
+    transition: color 0.3s;
 }
 
 .day-review {
-    background-color: #e0f2f7; /* Light blue */
+    background-color: var(--bg-review);
     padding: 20px;
     border-radius: var(--border-radius);
     border: 1px solid #bbdefb;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
 .day-review textarea {
@@ -293,6 +518,7 @@ h1, h2, h3, h4 {
     margin-bottom: 15px;
     resize: vertical;
     font-size: 1em;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
 }
 
 .rating-section {
@@ -305,6 +531,11 @@ h1, h2, h3, h4 {
 .rating-section label {
     color: #555;
     font-weight: bold;
+    transition: color 0.3s;
+}
+
+.dark-mode .rating-section label {
+    color: var(--dark-text-dark);
 }
 
 .rating-section input[type="number"] {
@@ -313,6 +544,7 @@ h1, h2, h3, h4 {
     border: 1px solid var(--border-color);
     border-radius: 5px;
     font-size: 1em;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
 }
 
 .day-review button {
@@ -339,9 +571,10 @@ h1, h2, h3, h4 {
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     padding: 15px;
-    background-color: #ffffff;
+    background-color: var(--element-bg);
     text-align: center;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
 #calendar table {
@@ -356,6 +589,7 @@ h1, h2, h3, h4 {
     text-align: center;
     vertical-align: middle;
     font-size: 0.9em;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
 }
 
 #calendar th {
@@ -376,13 +610,13 @@ h1, h2, h3, h4 {
     background-color: var(--accent-color);
     color: var(--text-dark);
     font-weight: bold;
-    border-radius: 50%; /* Make today stand out */
+    border-radius: 50%;
     position: relative;
-    z-index: 1; /* Ensure it's on top */
+    z-index: 1;
 }
 
 #calendar td.has-history {
-    background-color: #c8e6c9; /* Light green for days with history */
+    background-color: #c8e6c9;
     font-weight: 500;
 }
 
@@ -390,7 +624,7 @@ h1, h2, h3, h4 {
     background-color: var(--secondary-color);
     color: white;
     font-weight: bold;
-    border-radius: 50%; /* Make selected day stand out */
+    border-radius: 50%;
 }
 
 #calendar-header {
@@ -401,6 +635,7 @@ h1, h2, h3, h4 {
     font-size: 1.1em;
     font-weight: bold;
     color: var(--secondary-color);
+    transition: color 0.3s;
 }
 
 #calendar-header button {
@@ -418,11 +653,12 @@ h1, h2, h3, h4 {
 
 #history-content {
     margin-top: 25px;
-    background-color: #ffffff;
+    background-color: var(--element-bg);
     padding: 15px;
     border-radius: var(--border-radius);
     border: 1px solid var(--border-color);
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
 #history-content h3 {
@@ -430,6 +666,7 @@ h1, h2, h3, h4 {
     border-bottom: 1px dashed var(--border-color);
     padding-bottom: 10px;
     margin-bottom: 15px;
+    transition: color 0.3s, border-bottom-color 0.3s;
 }
 
 #selected-day-history h4 {
@@ -438,27 +675,33 @@ h1, h2, h3, h4 {
 }
 
 #selected-day-history ul {
-    list-style: none; /* Remove default bullet */
+    list-style: none;
     padding-left: 0;
 }
 
 #selected-day-history ul li {
     margin-bottom: 5px;
-    padding-left: 1.2em; /* Indent for custom bullet */
+    padding-left: 1.2em;
     position: relative;
+    transition: color 0.3s;
 }
 
 #selected-day-history ul li::before {
-    content: "•"; /* Custom bullet */
+    content: "•";
     color: var(--primary-color);
     position: absolute;
     left: 0;
     font-weight: bold;
+    transition: color 0.3s;
+}
+.dark-mode #selected-day-history ul li::before {
+    color: var(--dark-primary-color);
 }
 
 #selected-day-history p {
     line-height: 1.5;
     margin-bottom: 8px;
+    transition: color 0.3s;
 }
 
 
@@ -466,19 +709,19 @@ h1, h2, h3, h4 {
 @media (max-width: 1024px) {
     main {
         flex-direction: column;
-        align-items: center; /* Center items in column layout */
+        align-items: center;
         padding: 15px;
     }
 
     aside.sidebar {
-        flex: 0 0 auto; /* Allow sidebars to take full width */
-        max-width: 95%; /* Adjust max-width for better appearance */
-        width: 100%; /* Take full width on smaller screens */
-        margin-bottom: 20px; /* Add space between sections */
+        flex: 0 0 auto;
+        max-width: 95%;
+        width: 100%;
+        margin-bottom: 20px;
     }
 
     section#task-management {
-        min-width: unset; /* Remove min-width on smaller screens */
+        min-width: unset;
         width: 100%;
         padding: 20px;
     }
@@ -492,29 +735,53 @@ h1, h2, h3, h4 {
     .task-add-section select,
     .task-add-section button {
         width: 100%;
-        box-sizing: border-box; /* Include padding and border in width */
+        box-sizing: border-box;
     }
 
     .mobile-nav-buttons {
-        display: flex; /* Show buttons on mobile */
+        display: flex;
     }
 
-    /* Hide sidebars by default on smaller screens unless toggled */
+    /* OLD CODE:
     #daily-news-section, #calendar-history-section {
         display: none;
     }
+    */
+    /* NEW CODE to replace the OLD CODE above */
+    aside.sidebar:not(.visible-mobile) {
+        display: none;
+    }
 }
+
+/* --- IMPORTANT NEW CSS RULE TO ADD AT THE END OF THE FILE --- */
+/* New CSS rule to make sidebar visible when toggled on mobile */
+aside.sidebar.visible-mobile {
+    display: flex !important; /* Force display flex when active */
+    position: fixed; /* Keep it in place */
+    top: 0; /* Or header height + margin (e.g., if header is 60px, top: 70px;) */
+    right: 0;
+    width: 80%; /* Take up most of the screen */
+    height: 100vh; /* Full height */
+    z-index: 1000; /* Ensure it's on top of other content */
+    padding-top: 80px; /* Adjust this value if your header is taller, to avoid content hiding behind header */
+    box-sizing: border-box; /* Include padding in width/height */
+    overflow-y: auto; /* Enable scrolling if content overflows */
+    left: auto; /* Ensure it sticks to the right */
+    flex-direction: column; /* Ensure content stacks vertically */
+}
+/* --- END OF IMPORTANT NEW CSS RULE --- */
+
 
 @media (max-width: 768px) {
     body {
         font-size: 0.95em;
     }
     header {
-        padding-top: 0; /* Adjust header padding */
+        padding-top: 0;
     }
     #motivation-line {
         font-size: 1em;
-        animation: marquee 20s linear infinite; /* Faster marquee on smaller screens */
+        animation: marquee 20s linear infinite;
     }
     .mobile-nav-btn {
         font-size: 0.9em;
