@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Daily Tasks</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="index.css"> 
 </head>
 <body class="light-mode">
     <header>
@@ -19,7 +19,7 @@
 
     <main>
         <aside id="daily-news-section" class="sidebar">
-            <h2>Daily Important News</h2>
+            <h2>Daily Important News <button id="closeNewsBtn" class="close-btn">X</button></h2>
             <div id="news-content">
                 <p>Loading news...</p>
             </div>
@@ -33,7 +33,7 @@
                 <select id="taskCategorySelect">
                     <option value="study">Study</option>
                     <option value="homework">Home Work</option>
-                </select>
+                    </select>
                 <button id="addTaskBtn"><i class="fas fa-plus-circle"></i> Add Task</button>
             </div>
 
@@ -57,7 +57,7 @@
                         <button id="addCustomCategoryBtn"><i class="fas fa-folder-plus"></i> Add Category</button>
                     </div>
                     <div id="custom-task-sections">
-                    </div>
+                        </div>
                 </div>
             </div>
 
@@ -78,7 +78,7 @@
         </section>
 
         <aside id="calendar-history-section" class="sidebar">
-            <h2><i class="fas fa-calendar-day"></i> Live Calendar & History</h2>
+            <h2><i class="fas fa-calendar-day"></i> Live Calendar & History <button id="closeCalendarBtn" class="close-btn">X</button></h2>
             <div id="calendar"></div>
             <div id="history-content">
                 <h3>Previous Day's History</h3>
@@ -89,7 +89,6 @@
         </aside>
     </main>
 
-    <script src="index.js"></script>
-    <script src="history.html"></script>
+    <script src="index.js"></script> 
 </body>
 </html>
