@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const historyDetailsDiv = document.getElementById('history-details');
-    const selectedDate = sessionStorage.getItem('selectedHistoryDate');
+    const historyDateElement = document.getElementById('historyDate'); // Get the new h1 element
+    const selectedDateRaw = sessionStorage.getItem('selectedHistoryDate'); // Get the raw YYYY-MM-DD date
     const userName = localStorage.getItem('userName') || 'User';
     const tasks = JSON.parse(localStorage.getItem('dailyTasks')) || {};
 
@@ -10,12 +11,18 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('dark-mode');
     }
 
-    if (!selectedDate || !tasks[selectedDate]) {
+    if (!selectedDateRaw || !tasks[selectedDateRaw]) {
         historyDetailsDiv.innerHTML = '<p class="no-data">No data available for the selected date.</p>';
         return;
     }
 
-    const dayData = tasks[selectedDate];
+    const dayData = tasks[selectedDateRaw]; // Use selectedDateRaw for data retrieval
+
+    // --- Format the date for display ---
+    const dateObj = new Date(selectedDateRaw + 'T00:00:00'); // Add T00:00:00 to handle timezone issues
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = dateObj.toLocaleDateString('en-US', options); // Example: "Monday, July 21, 2025"
+
     let htmlContent = '';
 
     // Personalized Motivation based on user and data
@@ -35,12 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
         personalizedMotivation = `No tasks recorded for this day, ${userName}. A good day to plan for the future!`;
     }
 
+    // Populate the historyDate element directly
+    if (historyDateElement) {
+        historyDateElement.innerHTML = `<i class="fas fa-calendar-day"></i> Daily Task History for ${formattedDate}`;
+    }
 
     htmlContent += `
-        <div class="header-section">
-            <h1>Daily Task History for ${selectedDate}</h1>
-            <p class="personalized-message">${personalizedMotivation}</p>
-        </div>
+        <p class="personalized-message">${personalizedMotivation}</p>
     `;
 
     // Tasks Section
@@ -119,5 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     htmlContent += `</div>`;
 
-    historyDetailsDiv.innerHTML = htmlContent;
+    // Now append the generated HTML content below the historyDate element
+    historyDetailsDiv.innerHTML += htmlContent;
 });
