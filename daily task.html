@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Daily Tasks</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="daily task.css">
+</head>
+<body class="light-mode">
+    <header>
+        <div id="motivation-line"></div>
+        <button id="darkModeToggle" class="mode-toggle-btn"><i class="fas fa-moon"></i> Dark Mode</button>
+        <div class="mobile-nav-buttons">
+            <button id="toggleNewsBtn" class="mobile-nav-btn"><i class="fas fa-newspaper"></i> News</button>
+            <button id="toggleCalendarBtn" class="mobile-nav-btn"><i class="fas fa-calendar-alt"></i> Calendar</button>
+        </div>
+    </header>
+
+    <main>
+        <aside id="daily-news-section" class="sidebar">
+            <h2>Daily Important News</h2>
+            <div id="news-content">
+                <p>Loading news...</p>
+            </div>
+        </aside>
+
+        <section id="task-management">
+            <h1><i class="fas fa-clipboard-list"></i> Today's Tasks</h1>
+            
+            <div class="task-add-section">
+                <input type="text" id="newTaskInput" placeholder="Add a new task...">
+                <select id="taskCategorySelect">
+                    <option value="study">Study</option>
+                    <option value="homework">Home Work</option>
+                </select>
+                <button id="addTaskBtn"><i class="fas fa-plus-circle"></i> Add Task</button>
+            </div>
+
+            <div class="task-categories">
+                <h3>Most Important Work</h3>
+                
+                <div class="task-category-item">
+                    <h4><i class="fas fa-book-reader"></i> Study</h4>
+                    <ul id="study-tasks" class="task-list"></ul>
+                </div>
+                
+                <div class="task-category-item">
+                    <h4><i class="fas fa-home"></i> Home Work</h4>
+                    <ul id="homework-tasks" class="task-list"></ul>
+                </div>
+
+                <div class="task-category-item custom-category-creator">
+                    <h4><i class="fas fa-boxes"></i> Custom Categories</h4>
+                    <div class="custom-category-input-group">
+                        <input type="text" id="customCategoryInput" placeholder="New custom category name">
+                        <button id="addCustomCategoryBtn"><i class="fas fa-folder-plus"></i> Add Category</button>
+                    </div>
+                    <div id="custom-task-sections">
+                    </div>
+                </div>
+            </div>
+
+            <div class="all-tasks-section">
+                <h3><i class="fas fa-tasks"></i> All Daily Tasks Overview</h3>
+                <ul id="all-daily-tasks" class="task-list"></ul>
+            </div>
+
+            <div class="day-review">
+                <h3><i class="fas fa-star"></i> Day Review</h3>
+                <textarea id="weakness-improvement" placeholder="What went well? What needs improvement? (Weakness & Improvement)..."></textarea>
+                <div class="rating-section">
+                    <label for="day-rating">Rate your day (1-5):</label>
+                    <input type="number" id="day-rating" min="1" max="5" value="3">
+                </div>
+                <button id="saveDayReviewBtn"><i class="fas fa-save"></i> Save Day Review</button>
+            </div>
+        </section>
+
+        <aside id="calendar-history-section" class="sidebar">
+            <h2><i class="fas fa-calendar-day"></i> Live Calendar & History</h2>
+            <div id="calendar"></div>
+            <div id="history-content">
+                <h3>Previous Day's History</h3>
+                <div id="selected-day-history">
+                    <p>Select a date to view history.</p>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <script src="daily task.js"></script>
+    <script src="history.html"></script>
+</body>
+</html>

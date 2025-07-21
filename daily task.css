@@ -1,0 +1,555 @@
+:root {
+    --primary-color: #4CAF50; /* Green */
+    --secondary-color: #2196F3; /* Blue */
+    --accent-color: #FFC107; /* Amber */
+    --text-dark: #333;
+    --text-light: #f4f7f6;
+    --bg-light: #f4f7f6;
+    --bg-medium: #e8f5e9; /* Light green for sections */
+    --bg-dark: #2c3e50; /* Dark blue-gray */
+    --border-color: #ddd;
+    --shadow: 0 4px 10px rgba(0,0,0,0.08);
+    --border-radius: 8px;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-light);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    color: var(--text-dark);
+}
+
+header {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    padding: 10px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+#motivation-line {
+    font-size: 1.2em;
+    font-style: italic;
+    white-space: nowrap;
+    animation: marquee 25s linear infinite; /* Slower marquee */
+    padding: 5px 20px;
+}
+
+@keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+/* Mobile Navigation Buttons */
+.mobile-nav-buttons {
+    display: none; /* Hidden by default, shown on mobile */
+    justify-content: space-around;
+    padding: 10px;
+    background-color: #3f51b5; /* Slightly different background for nav */
+    box-shadow: var(--shadow);
+}
+
+.mobile-nav-btn {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.mobile-nav-btn:hover {
+    background-color: #1976D2;
+}
+
+
+main {
+    display: flex;
+    flex: 1;
+    padding: 20px;
+    gap: 20px;
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
+    justify-content: center;
+}
+
+aside.sidebar {
+    background-color: var(--bg-medium);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    flex: 0 0 28%; /* Adjusted width for sidebars */
+    max-width: 28%;
+    display: flex;
+    flex-direction: column;
+}
+
+aside.sidebar.hidden-mobile {
+    display: none; /* For mobile toggling */
+}
+
+section#task-management {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    flex: 1; /* Takes remaining space */
+    min-width: 400px; /* Minimum width before wrapping */
+}
+
+h1, h2, h3, h4 {
+    color: var(--text-dark);
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.task-add-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap; /* Allows wrapping inputs on small screens */
+}
+
+.task-add-section input[type="text"],
+.task-add-section select {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1em;
+    min-width: 150px; /* Ensure inputs don't get too small */
+}
+
+.task-add-section button {
+    padding: 12px 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.task-add-section button:hover {
+    background-color: #43A047; /* Darker green */
+}
+
+.task-categories {
+    margin-bottom: 30px;
+}
+
+.task-category-item {
+    background-color: #e3f2fd; /* Light blue for category cards */
+    padding: 15px;
+    border-radius: var(--border-radius);
+    margin-bottom: 15px;
+    border: 1px solid #c0ddef;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.task-category-item h4 {
+    color: var(--secondary-color);
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.task-list li {
+    background-color: #ffffff;
+    border: 1px solid #dcdcdc;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.task-list li:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.task-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1;
+}
+
+.task-content input[type="checkbox"] {
+    transform: scale(1.3);
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.task-list li.completed {
+    text-decoration: line-through;
+    color: #888;
+    background-color: #e6ffe6; /* Very light green for completed */
+    border-color: #a5d6a7;
+}
+
+.task-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.task-actions button {
+    background-color: #dc3545; /* Red */
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: background-color 0.3s ease;
+}
+
+.task-actions button:hover {
+    background-color: #c82333; /* Darker red */
+}
+
+.custom-category-creator .custom-category-input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.custom-category-creator .custom-category-input-group input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+}
+
+.custom-category-creator .custom-category-input-group button {
+    background-color: var(--secondary-color);
+    padding: 10px 15px;
+    border-radius: 5px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.custom-category-creator .custom-category-input-group button:hover {
+    background-color: #1976D2;
+}
+
+.all-tasks-section {
+    background-color: #fffde7; /* Light yellow */
+    padding: 15px;
+    border-radius: var(--border-radius);
+    margin-bottom: 30px;
+    border: 1px solid #ffe082;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.all-tasks-section h3 {
+    color: #FBC02D; /* Darker yellow */
+}
+
+.day-review {
+    background-color: #e0f2f7; /* Light blue */
+    padding: 20px;
+    border-radius: var(--border-radius);
+    border: 1px solid #bbdefb;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.day-review textarea {
+    width: calc(100% - 22px);
+    height: 120px;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    margin-bottom: 15px;
+    resize: vertical;
+    font-size: 1em;
+}
+
+.rating-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+.rating-section label {
+    color: #555;
+    font-weight: bold;
+}
+
+.rating-section input[type="number"] {
+    width: 70px;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.day-review button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.day-review button:hover {
+    background-color: #43A047;
+}
+
+/* Calendar Styling */
+#calendar {
+    margin-top: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    background-color: #ffffff;
+    text-align: center;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+#calendar table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+#calendar th, #calendar td {
+    padding: 8px;
+    border: 1px solid #eee;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.9em;
+}
+
+#calendar th {
+    background-color: #f2f2f2;
+    color: var(--text-dark);
+}
+
+#calendar td {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#calendar td:hover {
+    background-color: #e0e0e0;
+}
+
+#calendar td.today {
+    background-color: var(--accent-color);
+    color: var(--text-dark);
+    font-weight: bold;
+    border-radius: 50%; /* Make today stand out */
+    position: relative;
+    z-index: 1; /* Ensure it's on top */
+}
+
+#calendar td.has-history {
+    background-color: #c8e6c9; /* Light green for days with history */
+    font-weight: 500;
+}
+
+#calendar td.selected-day {
+    background-color: var(--secondary-color);
+    color: white;
+    font-weight: bold;
+    border-radius: 50%; /* Make selected day stand out */
+}
+
+#calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+#calendar-header button {
+    background: none;
+    border: none;
+    font-size: 1.4em;
+    cursor: pointer;
+    color: var(--secondary-color);
+    transition: color 0.3s ease;
+}
+
+#calendar-header button:hover {
+    color: #1976D2;
+}
+
+#history-content {
+    margin-top: 25px;
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+#history-content h3 {
+    color: var(--secondary-color);
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+#selected-day-history h4 {
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+#selected-day-history ul {
+    list-style: none; /* Remove default bullet */
+    padding-left: 0;
+}
+
+#selected-day-history ul li {
+    margin-bottom: 5px;
+    padding-left: 1.2em; /* Indent for custom bullet */
+    position: relative;
+}
+
+#selected-day-history ul li::before {
+    content: "•"; /* Custom bullet */
+    color: var(--primary-color);
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+#selected-day-history p {
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+
+/* Media Queries for Responsiveness */
+@media (max-width: 1024px) {
+    main {
+        flex-direction: column;
+        align-items: center; /* Center items in column layout */
+        padding: 15px;
+    }
+
+    aside.sidebar {
+        flex: 0 0 auto; /* Allow sidebars to take full width */
+        max-width: 95%; /* Adjust max-width for better appearance */
+        width: 100%; /* Take full width on smaller screens */
+        margin-bottom: 20px; /* Add space between sections */
+    }
+
+    section#task-management {
+        min-width: unset; /* Remove min-width on smaller screens */
+        width: 100%;
+        padding: 20px;
+    }
+
+    .task-add-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .task-add-section input[type="text"],
+    .task-add-section select,
+    .task-add-section button {
+        width: 100%;
+        box-sizing: border-box; /* Include padding and border in width */
+    }
+
+    .mobile-nav-buttons {
+        display: flex; /* Show buttons on mobile */
+    }
+
+    /* Hide sidebars by default on smaller screens unless toggled */
+    #daily-news-section, #calendar-history-section {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        font-size: 0.95em;
+    }
+    header {
+        padding-top: 0; /* Adjust header padding */
+    }
+    #motivation-line {
+        font-size: 1em;
+        animation: marquee 20s linear infinite; /* Faster marquee on smaller screens */
+    }
+    .mobile-nav-btn {
+        font-size: 0.9em;
+        padding: 8px 12px;
+    }
+    main {
+        padding: 10px;
+    }
+    aside.sidebar, section#task-management {
+        padding: 15px;
+        border-radius: 6px;
+    }
+    h1, h2, h3, h4 {
+        font-size: 1.3em;
+        margin-bottom: 10px;
+    }
+    .task-add-section button, .day-review button, .custom-category-creator button {
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+    .task-list li {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 8px 10px;
+    }
+    .task-actions {
+        margin-top: 8px;
+        width: 100%;
+        justify-content: flex-end;
+    }
+    .day-review textarea {
+        height: 100px;
+    }
+    .rating-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

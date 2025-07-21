@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Task History</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific styles for history.html to make it clean and readable */
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            padding: 20px;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 20px auto;
+            box-shadow: var(--shadow);
+            border-radius: var(--border-radius);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .dark-mode body {
+            background-color: var(--dark-bg-medium);
+            color: var(--dark-text-light);
+            box-shadow: var(--dark-shadow);
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dark-mode h1, .dark-mode h2, .dark-mode h3, .dark-mode h4 {
+            color: var(--dark-primary-color);
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .dark-mode .header-section {
+            border-bottom-color: var(--dark-border-color);
+        }
+
+        .personalized-message {
+            font-style: italic;
+            color: #555;
+            margin-top: 10px;
+            font-size: 1.1em;
+        }
+        .dark-mode .personalized-message {
+            color: #bbb;
+        }
+
+        .section-divider {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 20px;
+        }
+        .dark-mode .section-divider {
+            border-top-color: var(--dark-border-color);
+        }
+
+        .task-category-item {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            border: 1px solid #c0ddef;
+        }
+        .dark-mode .task-category-item {
+            background-color: var(--dark-bg-category);
+            border-color: var(--dark-border-color);
+        }
+
+        .task-category-item h4 {
+            color: var(--secondary-color);
+            border-bottom: 1px dashed #a7d9f7;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+        .dark-mode .task-category-item h4 {
+            color: var(--dark-secondary-color);
+            border-bottom-color: var(--dark-border-color);
+        }
+
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .task-list li {
+            background-color: #ffffff;
+            border: 1px solid #dcdcdc;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .dark-mode .task-list li {
+            background-color: var(--dark-element-bg);
+            border-color: var(--dark-border-color);
+            color: var(--dark-text-light);
+        }
+
+        .task-list li.completed {
+            text-decoration: line-through;
+            color: #888;
+            background-color: #e6ffe6;
+        }
+        .dark-mode .task-list li.completed {
+            color: #a0a0a0;
+            background-color: #2e4c34; /* Darker green for completed */
+        }
+
+
+        .day-review-section {
+            background-color: #e0f2f7;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            border: 1px solid #bbdefb;
+        }
+        .dark-mode .day-review-section {
+            background-color: var(--dark-bg-review);
+            border-color: var(--dark-border-color);
+        }
+
+        .day-review-section p {
+            margin-bottom: 10px;
+        }
+
+        .no-data {
+            text-align: center;
+            font-size: 1.2em;
+            color: #777;
+            margin-top: 50px;
+        }
+        .dark-mode .no-data {
+            color: #bbb;
+        }
+
+        .back-button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .back-button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #1976D2;
+        }
+
+        @media print {
+            body {
+                box-shadow: none;
+                max-width: 100%;
+                margin: 0;
+                padding: 10px;
+                background-color: white; /* Force white background for printing */
+                color: black;
+            }
+            .dark-mode body {
+                background-color: white !important;
+                color: black !important;
+            }
+            .dark-mode h1, .dark-mode h2, .dark-mode h3, .dark-mode h4 {
+                color: black !important;
+            }
+            .dark-mode .personalized-message, .dark-mode .task-list li.completed {
+                color: #555 !important;
+            }
+            .dark-mode .task-category-item, .dark-mode .task-list li, .dark-mode .day-review-section {
+                background-color: #f0f0f0 !important;
+                border-color: #ccc !important;
+            }
+            .back-button-container {
+                display: none; /* Hide back button when printing */
+            }
+            header, .mobile-nav-buttons, aside { /* Hide main app elements if accidentally printed */
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <div id="history-details">
+        <p class="no-data">Loading history...</p>
+    </div>
+
+    <div class="back-button-container">
+        <a href="daily task.html" class="back-button"><i class="fas fa-arrow-left"></i> Back to Main App</a>
+    </div>
+
+    <script src="history.js"></script>
+</body>
+</html>
