@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Daily Tasks</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="index.css"> <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--bg-light);
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .auth-container {
+            background-color: var(--element-bg);
+            padding: 40px 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .auth-container h1 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+        .form-group input {
+            width: calc(100% - 24px); /* Account for padding */
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+        }
+        .auth-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        .auth-button:hover {
+            background-color: #43A047;
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 0.95em;
+            color: var(--text-dark);
+        }
+        .message a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+        .message a:hover {
+            text-decoration: underline;
+        }
+        .error-message {
+            color: #dc3545;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* Dark mode for Auth pages */
+        body.dark-mode {
+            background-color: var(--dark-bg-light);
+            color: var(--dark-text-dark);
+        }
+        body.dark-mode .auth-container {
+            background-color: var(--dark-element-bg);
+            box-shadow: var(--dark-shadow);
+        }
+        body.dark-mode .auth-container h1 {
+            color: var(--dark-primary-color);
+        }
+        body.dark-mode .form-group label {
+            color: var(--dark-text-dark);
+        }
+        body.dark-mode .form-group input {
+            background-color: var(--dark-bg-medium);
+            border-color: var(--dark-border-color);
+            color: var(--dark-text-dark);
+        }
+        body.dark-mode .auth-button {
+            background-color: var(--dark-primary-color);
+        }
+        body.dark-mode .auth-button:hover {
+            background-color: #72af75;
+        }
+        body.dark-mode .message {
+            color: var(--dark-text-dark);
+        }
+        body.dark-mode .message a {
+            color: var(--dark-secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <h1>Register</h1>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="auth-button">Register</button>
+        </form>
+        <p id="message" class="message"></p>
+        <p class="message">Already have an account? <a href="login.html">Login here</a></p>
+    </div>
+
+    <script>
+        // This script will handle the registration logic
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent default form submission
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const messageElement = document.getElementById('message');
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/register', { // Make sure this URL is correct
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) { // Check if response status is 2xx (success)
+                    messageElement.className = 'message'; // Reset class
+                    messageElement.style.color = 'var(--primary-color)'; // Green for success
+                    messageElement.innerHTML = `Success! ${data.message}. You can now <a href="login.html">login</a>.`;
+                    document.getElementById('registerForm').reset(); // Clear form
+                } else {
+                    messageElement.className = 'error-message'; // Set class for error styling
+                    messageElement.style.color = '#dc3545'; // Red for error
+                    messageElement.textContent = data.message || 'Registration failed.';
+                }
+            } catch (error) {
+                messageElement.className = 'error-message';
+                messageElement.style.color = '#dc3545';
+                messageElement.textContent = 'Network error. Please try again later.';
+                console.error('Registration error:', error);
+            }
+        });
+
+        // Apply dark mode preference on this page as well
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+</body>
+</html>
