@@ -1,8 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Authentication Check (MOVED TO THE VERY TOP) ---
+    const userToken = localStorage.getItem('userToken'); // Get token from local storage
+    if (!userToken) {
+        // If no token, redirect to login page
+        window.location.href = 'login.html';
+        return; // Stop further script execution if not authenticated
+    }
+
+    // Now, retrieve username as well (if needed for display)
+    const userName = localStorage.getItem('username') || 'User'; // Get username from local storage
+
     const historyDetailsDiv = document.getElementById('history-details');
     const historyDateElement = document.getElementById('historyDate'); // Get the new h1 element
     const selectedDateRaw = sessionStorage.getItem('selectedHistoryDate'); // Get the raw YYYY-MM-DD date
-    const userName = localStorage.getItem('userName') || 'User';
     const tasks = JSON.parse(localStorage.getItem('dailyTasks')) || {};
 
     // Apply dark mode preference
