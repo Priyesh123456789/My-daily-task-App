@@ -1,4 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Authentication Check (MOVED TO THE VERY TOP) ---
+    const userToken = localStorage.getItem('userToken'); // Get token from local storage
+    if (!userToken) {
+        // If no token, redirect to login page
+        window.location.href = 'login.html';
+        return; // Stop further script execution if not authenticated
+    }
+
+    // Now, retrieve username as well (if needed for display, e.g., "Welcome, [username]!")
+    let userName = localStorage.getItem('username') || 'User'; // Get username from local storage
+
+    // --- REMOVED THE OLD "User Name Prompt" SECTION ---
+    // (The previous `let userName = localStorage.getItem('userName'); if (!userName) { ... }` block is removed
+    // as username is now managed by login/registration)
+
+
     // Get references to elements
     const motivationLine = document.getElementById('motivation-line');
     const newsContent = document.getElementById('news-content');
@@ -23,20 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const darkModeToggle = document.getElementById('darkModeToggle');
     const body = document.body;
 
-    // New: Get references for close buttons
+    // New: Get references for close buttons and logout button
     const closeNewsBtn = document.getElementById('closeNewsBtn');
     const closeCalendarBtn = document.getElementById('closeCalendarBtn');
+    const logoutBtn = document.getElementById('logoutBtn'); // NEW: Logout Button
 
-    // --- User Name Prompt ---
-    let userName = localStorage.getItem('userName');
-    if (!userName) {
-        userName = prompt("Welcome! What's your name?");
-        if (userName) {
-            localStorage.setItem('userName', userName);
-        } else {
-            userName = "User"; // Default name if no input
-        }
-    }
 
     // --- Dark Mode Logic ---
     const currentMode = localStorage.getItem('theme') || 'light';
@@ -88,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchDailyNews();
 
     // --- Task Management ---
+    // Note: Tasks are still stored by date for now, but will eventually be user-specific from backend
     let tasks = JSON.parse(localStorage.getItem('dailyTasks')) || {};
     let customCategories = JSON.parse(localStorage.getItem('customCategories')) || [];
 
@@ -456,54 +464,54 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    function selectCalendarDate(date) {
-        selectedDate = date;
-        renderTasks(selectedDate);
-        loadDayReview(selectedDate);
-        // We no longer display history in this section, it's for the separate page
-        document.getElementById('selected-day-history').innerHTML = '<p>Select a date with recorded history to view details in a new page.</p>';
-        renderCalendar(currentMonth, currentYear);
-    }
+    function selectCalendarDate(date) {
+        selectedDate = date;
+        renderTasks(selectedDate);
+        loadDayReview(selectedDate);
+        // We no longer display history in this section, it's for the separate page
+        document.getElementById('selected-day-history').innerHTML = '<p>Select a date with recorded history to view details in a new page.</p>';
+        renderCalendar(currentMonth, currentYear);
+    }
 
-    // Function to open the history page
-    function openHistoryPage(date) {
-        // Store the selected date in session storage so history.js can retrieve it
-        sessionStorage.setItem('selectedHistoryDate', date);
-        window.open('history.html', '_blank'); // Open in a new tab/window
-    }
+    // Function to open the history page
+    function openHistoryPage(date) {
+        // Store the selected date in session storage so history.js can retrieve it
+        sessionStorage.setItem('selectedHistoryDate', date);
+        window.open('history.html', '_blank'); // Open in a new tab/window
+    }
 
-    // --- Mobile Responsiveness Toggling ---
-    // Added null checks to ensure elements exist before adding listeners
-    if (toggleNewsBtn && dailyNewsSection && calendarHistorySection) {
-        toggleNewsBtn.addEventListener('click', () => {
-            dailyNewsSection.classList.toggle('visible-mobile');
-            calendarHistorySection.classList.remove('visible-mobile');
-        });
-    }
+    // --- Mobile Responsiveness Toggling ---
+    // Added null checks to ensure elements exist before adding listeners
+    if (toggleNewsBtn && dailyNewsSection && calendarHistorySection) {
+        toggleNewsBtn.addEventListener('click', () => {
+            dailyNewsSection.classList.toggle('visible-mobile');
+            calendarHistorySection.classList.remove('visible-mobile');
+        });
+    }
 
-    if (toggleCalendarBtn && dailyNewsSection && calendarHistorySection) {
-        toggleCalendarBtn.addEventListener('click', () => {
-            calendarHistorySection.classList.toggle('visible-mobile');
-            dailyNewsSection.classList.remove('visible-mobile');
-        });
-    }
+    if (toggleCalendarBtn && dailyNewsSection && calendarHistorySection) {
+        toggleCalendarBtn.addEventListener('click', () => {
+            calendarHistorySection.classList.toggle('visible-mobile');
+            dailyNewsSection.classList.remove('visible-mobile');
+        });
+    }
 
-    // New: Event listeners for close buttons
-    if (closeNewsBtn && dailyNewsSection) {
-        closeNewsBtn.addEventListener('click', () => {
-            dailyNewsSection.classList.remove('visible-mobile');
-        });
-    }
+    // New: Event listeners for close buttons
+    if (closeNewsBtn && dailyNewsSection) {
+        closeNewsBtn.addEventListener('click', () => {
+            dailyNewsSection.classList.remove('visible-mobile');
+        });
+    }
 
-    if (closeCalendarBtn && calendarHistorySection) {
-        closeCalendarBtn.addEventListener('click', () => {
-            calendarHistorySection.classList.remove('visible-mobile');
-        });
-    }
+    if (closeCalendarBtn && calendarHistorySection) {
+        closeCalendarBtn.addEventListener('click', () => {
+            calendarHistorySection.classList.remove('visible-mobile');
+        });
+    }
 
-    // Initial renders
-    populateCategorySelect();
-    renderTasks(selectedDate);
-    loadDayReview(selectedDate);
-    renderCalendar(currentMonth, currentYear);
+    // Initial renders
+    populateCategorySelect();
+    renderTasks(selectedDate);
+    loadDayReview(selectedDate);
+    renderCalendar(currentMonth, currentYear);
 });
