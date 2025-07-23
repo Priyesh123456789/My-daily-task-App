@@ -122,6 +122,18 @@
         <h1>Register</h1>
         <form id="registerForm">
             <div class="form-group">
+                <label for="fullName">Full Name:</label>
+                <input type="text" id="fullName" name="fullName" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="mobileNumber">Mobile Number (Optional):</label>
+                <input type="tel" id="mobileNumber" name="mobileNumber">
+            </div>
+            <div class="form-group">
                 <label for="username">Username:</label>
                 <input type="text" id="username" required>
             </div>
@@ -140,9 +152,29 @@
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault(); // Prevent default form submission
 
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            // Get values from all form fields (UPDATED)
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const mobileNumber = document.getElementById('mobileNumber').value.trim(); // Optional field
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
             const messageElement = document.getElementById('message');
+
+            // Basic client-side validation (can be more robust) (UPDATED)
+            if (!fullName || !email || !username || !password) {
+                messageElement.className = 'error-message'; // Set class for error styling
+                messageElement.style.color = '#dc3545'; // Red for error
+                messageElement.textContent = 'Please fill in all required fields (Full Name, Email, Username, Password).';
+                return;
+            }
+
+            // Check for basic email format (ADDED)
+            if (!/.+@.+\..+/.test(email)) {
+                messageElement.className = 'error-message';
+                messageElement.style.color = '#dc3545';
+                messageElement.textContent = 'Please enter a valid email address.';
+                return;
+            }
 
             try {
                 const response = await fetch('http://localhost:5000/api/auth/register', { // Make sure this URL is correct
@@ -150,7 +182,8 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ username, password }),
+                    // Send all new fields to the backend (UPDATED)
+                    body: JSON.stringify({ fullName, email, mobileNumber, username, password }),
                 });
 
                 const data = await response.json();
