@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Daily Tasks</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="index.css"> <style>
+    <link rel="stylesheet" href="index.css"> 
+    <style>
         body {
             display: flex;
             justify-content: center;
@@ -140,12 +141,13 @@
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault(); // Prevent default form submission
 
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value.trim(); // Added .trim()
+            const password = document.getElementById('password').value.trim(); // Added .trim()
             const messageElement = document.getElementById('message');
 
             try {
-                const response = await fetch('http://localhost:5000/api/auth/login', { // Make sure this URL is correct
+                // Ensure the URL is correct for your local backend testing
+                const response = await fetch('http://localhost:5000/api/auth/login', { 
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -159,8 +161,8 @@
                     messageElement.className = 'message'; // Reset class
                     messageElement.style.color = 'var(--primary-color)'; // Green for success
                     messageElement.textContent = `Login successful! Welcome, ${data.username}.`;
-
-                    // Store user token/info (we'll implement JWT token storage here later)
+                    
+                    // Store user token/info
                     localStorage.setItem('userToken', data.token); // Store the token from backend
                     localStorage.setItem('username', data.username); // Store username for display
 
