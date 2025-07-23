@@ -1,18 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Authentication Check (MOVED TO THE VERY TOP) ---
+    // --- Authentication Check (MOVED TO THE VERY TOP for immediate redirect) ---
     const userToken = localStorage.getItem('userToken'); // Get token from local storage
     if (!userToken) {
-        // If no token, redirect to login page
+        // If no token, redirect to login page immediately
         window.location.href = 'login.html';
-        return; // Stop further script execution if not authenticated
+        return; // Stop further script execution on this page if not authenticated
     }
 
     // Now, retrieve username as well (if needed for display, e.g., "Welcome, [username]!")
-    let userName = localStorage.getItem('username') || 'User'; // Get username from local storage
-
-    // --- REMOVED THE OLD "User Name Prompt" SECTION ---
-    // (The previous `let userName = localStorage.getItem('userName'); if (!userName) { ... }` block is removed
-    // as username is now managed by login/registration)
+    // We get username from localStorage as it's set during login.
+    let userName = localStorage.getItem('username') || 'User'; 
+    
+    // --- REMOVED THE OLD "User Name Prompt" SECTION from here ---
+    // (It's no longer needed as username comes from login)
 
 
     // Get references to elements
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // New: Get references for close buttons and logout button
     const closeNewsBtn = document.getElementById('closeNewsBtn');
     const closeCalendarBtn = document.getElementById('closeCalendarBtn');
-    const logoutBtn = document.getElementById('logoutBtn'); // NEW: Logout Button
+    const logoutBtn = document.getElementById('logoutBtn'); // Reference to the logout button
 
 
     // --- Dark Mode Logic ---
@@ -55,16 +55,18 @@ document.addEventListener('DOMContentLoaded', () => {
         darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
     }
 
-    darkModeToggle.addEventListener('click', () => {
-        body.classList.toggle('dark-mode');
-        if (body.classList.contains('dark-mode')) {
-            localStorage.setItem('theme', 'dark');
-            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
-        } else {
-            localStorage.setItem('theme', 'light');
-            darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
-        }
-    });
+    if (darkModeToggle) { // Ensure button exists before adding listener
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+            } else {
+                localStorage.setItem('theme', 'light');
+                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            }
+        });
+    }
 
     // --- Motivation Line ---
     const motivations = [
@@ -77,20 +79,24 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentMotivationIndex = 0;
 
     function updateMotivationLine() {
-        motivationLine.textContent = motivations[currentMotivationIndex];
-        currentMotivationIndex = (currentMotivationIndex + 1) % motivations.length;
+        if (motivationLine) { // Add null check for motivationLine
+            motivationLine.textContent = motivations[currentMotivationIndex];
+            currentMotivationIndex = (currentMotivationIndex + 1) % motivations.length;
+        }
     }
     setInterval(updateMotivationLine, 7000);
     updateMotivationLine();
 
     // --- Daily News Section (Placeholder) ---
     function fetchDailyNews() {
-        newsContent.innerHTML = `
-            <p><strong><i class="fas fa-arrow-right"></i> Tech:</strong> AI integration in everyday apps is on the rise.</p>
-            <p><strong><i class="fas fa-arrow-right"></i> Economy:</strong> Global markets show cautious optimism this week.</p>
-            <p><strong><i class="fas fa-arrow-right"></i> Lifestyle:</strong> Importance of mental well-being in busy schedules.</p>
-            <p><strong><i class="fas fa-arrow-right"></i> Local:</strong> Community cleanup drive successful in City Park.</p>
-        `;
+        if (newsContent) { // Add null check for newsContent
+            newsContent.innerHTML = `
+                <p><strong><i class="fas fa-arrow-right"></i> Tech:</strong> AI integration in everyday apps is on the rise.</p>
+                <p><strong><i class="fas fa-arrow-right"></i> Economy:</strong> Global markets show cautious optimism this week.</p>
+                <p><strong><i class="fas fa-arrow-right"></i> Lifestyle:</strong> Importance of mental well-being in busy schedules.</p>
+                <p><strong><i class="fas fa-arrow-right"></i> Local:</strong> Community cleanup drive successful in City Park.</p>
+            `;
+        }
     }
     fetchDailyNews();
 
@@ -109,15 +115,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function populateCategorySelect() {
-        const existingCustomOptions = taskCategorySelect.querySelectorAll('option[value]:not([value="study"]):not([value="homework"])');
-        existingCustomOptions.forEach(option => option.remove());
+        if (taskCategorySelect) { // Add null check for taskCategorySelect
+            const existingCustomOptions = taskCategorySelect.querySelectorAll('option[value]:not([value="study"]):not([value="homework"])');
+            existingCustomOptions.forEach(option => option.remove());
 
-        customCategories.forEach(category => {
-            const option = document.createElement('option');
-            option.value = category;
-            option.textContent = category;
-            taskCategorySelect.appendChild(option);
-        });
+            customCategories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                taskCategorySelect.appendChild(option);
+            });
+        }
     }
 
     function renderTasks(date) {
@@ -127,66 +135,74 @@ document.addEventListener('DOMContentLoaded', () => {
             custom: {}
         };
 
-        studyTasksList.innerHTML = '';
-        homeworkTasksList.innerHTML = '';
-        customTaskSections.innerHTML = '';
-        allDailyTasksList.innerHTML = '';
+        if (studyTasksList) studyTasksList.innerHTML = '';
+        if (homeworkTasksList) homeworkTasksList.innerHTML = '';
+        if (customTaskSections) customTaskSections.innerHTML = '';
+        if (allDailyTasksList) allDailyTasksList.innerHTML = '';
 
-        if (todayTasks.study.length === 0) {
-            studyTasksList.innerHTML = '<li class="no-task-message">No study tasks for today.</li>';
-        } else {
-            todayTasks.study.forEach(task => addTaskToDOM(task, studyTasksList, 'study', date));
-        }
-
-        if (todayTasks.homework.length === 0) {
-            homeworkTasksList.innerHTML = '<li class="no-task-message">No homework tasks for today.</li>';
-        } else {
-            todayTasks.homework.forEach(task => addTaskToDOM(task, homeworkTasksList, 'homework', date));
-        }
-
-        customCategories.forEach(category => {
-            const categoryDiv = document.createElement('div');
-            categoryDiv.classList.add('task-category-item');
-            categoryDiv.innerHTML = `
-                <h4><i class="fas fa-folder"></i> ${category}</h4>
-                <ul id="${category.toLowerCase().replace(/\s/g, '-')}-tasks" class="task-list"></ul>
-                <div class="custom-category-input-group">
-                    <input type="text" class="add-task-to-custom-input" placeholder="Add task to ${category}...">
-                    <button class="add-task-to-custom-btn" data-category="${category}"><i class="fas fa-plus"></i> Add</button>
-                    <button class="delete-custom-category-btn" data-category="${category}"><i class="fas fa-trash-alt"></i></button>
-                </div>
-            `;
-            customTaskSections.appendChild(categoryDiv);
-
-            const customTaskList = categoryDiv.querySelector('ul');
-            const categoryTasks = todayTasks.custom[category] || [];
-            if (categoryTasks.length === 0) {
-                customTaskList.innerHTML = `<li class="no-task-message">No tasks in ${category} category.</li>`;
+        if (studyTasksList) { // Check if element exists
+            if (todayTasks.study.length === 0) {
+                studyTasksList.innerHTML = '<li class="no-task-message">No study tasks for today.</li>';
             } else {
-                categoryTasks.forEach(task => addTaskToDOM(task, customTaskList, category, date));
+                todayTasks.study.forEach(task => addTaskToDOM(task, studyTasksList, 'study', date));
             }
-        });
+        }
 
-        document.querySelectorAll('.add-task-to-custom-btn').forEach(button => {
-            button.onclick = (e) => {
-                const category = e.currentTarget.dataset.category;
-                const input = e.currentTarget.previousElementSibling;
-                const taskText = input.value.trim();
-                if (taskText) {
-                    addTask(taskText, category, date);
-                    input.value = '';
-                }
-            };
-        });
+        if (homeworkTasksList) { // Check if element exists
+            if (todayTasks.homework.length === 0) {
+                homeworkTasksList.innerHTML = '<li class="no-task-message">No homework tasks for today.</li>';
+            } else {
+                todayTasks.homework.forEach(task => addTaskToDOM(task, homeworkTasksList, 'homework', date));
+            }
+        }
+        
+        if (customTaskSections) { // Check if element exists before adding content
+            customCategories.forEach(category => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.classList.add('task-category-item');
+                categoryDiv.innerHTML = `
+                    <h4><i class="fas fa-folder"></i> ${category}</h4>
+                    <ul id="${category.toLowerCase().replace(/\s/g, '-')}-tasks" class="task-list"></ul>
+                    <div class="custom-category-input-group">
+                        <input type="text" class="add-task-to-custom-input" placeholder="Add task to ${category}...">
+                        <button class="add-task-to-custom-btn" data-category="${category}"><i class="fas fa-plus"></i> Add</button>
+                        <button class="delete-custom-category-btn" data-category="${category}"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `;
+                customTaskSections.appendChild(categoryDiv);
 
-        document.querySelectorAll('.delete-custom-category-btn').forEach(button => {
-            button.onclick = (e) => {
-                const categoryToDelete = e.currentTarget.dataset.category;
-                if (confirm(`Are you sure you want to delete the category "${categoryToDelete}" and all its tasks?`)) {
-                    deleteCustomCategory(categoryToDelete);
+                const customTaskList = categoryDiv.querySelector('ul');
+                const categoryTasks = todayTasks.custom[category] || [];
+                if (customTaskList) { // Check before setting innerHTML
+                    if (categoryTasks.length === 0) {
+                        customTaskList.innerHTML = `<li class="no-task-message">No tasks in ${category} category.</li>`;
+                    } else {
+                        categoryTasks.forEach(task => addTaskToDOM(task, customTaskList, category, date));
+                    }
                 }
-            };
-        });
+            });
+
+            document.querySelectorAll('.add-task-to-custom-btn').forEach(button => {
+                button.onclick = (e) => {
+                    const category = e.currentTarget.dataset.category;
+                    const input = e.currentTarget.previousElementSibling;
+                    const taskText = input.value.trim();
+                    if (taskText) {
+                        addTask(taskText, category, date);
+                        input.value = '';
+                    }
+                };
+            });
+
+            document.querySelectorAll('.delete-custom-category-btn').forEach(button => {
+                button.onclick = (e) => {
+                    const categoryToDelete = e.currentTarget.dataset.category;
+                    if (confirm(`Are you sure you want to delete the category "${categoryToDelete}" and all its tasks?`)) {
+                        deleteCustomCategory(categoryToDelete);
+                    }
+                };
+            });
+        } // End if customTaskSections exists
 
         const allTasksForOverview = [];
         if (todayTasks.study) allTasksForOverview.push(...todayTasks.study);
@@ -197,17 +213,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        if (allTasksForOverview.length === 0) {
-            allDailyTasksList.innerHTML = '<li class="no-task-message">No tasks added for today yet.</li>';
-        } else {
-            allTasksForOverview.forEach(task => {
-                const li = document.createElement('li');
-                li.innerHTML = `<i class="${task.completed ? 'fas fa-check-circle' : 'far fa-circle'}" style="color:${task.completed ? 'var(--primary-color)' : '#888'};"></i> ${task.text}`;
-                if (task.completed) {
-                    li.classList.add('completed');
-                }
-                allDailyTasksList.appendChild(li);
-            });
+        if (allDailyTasksList) { // Check if element exists
+            if (allTasksForOverview.length === 0) {
+                allDailyTasksList.innerHTML = '<li class="no-task-message">No tasks added for today yet.</li>';
+            } else {
+                allTasksForOverview.forEach(task => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<i class="${task.completed ? 'fas fa-check-circle' : 'far fa-circle'}" style="color:${task.completed ? 'var(--primary-color)' : '#888'};"></i> ${task.text}`;
+                    if (task.completed) {
+                        li.classList.add('completed');
+                    }
+                    allDailyTasksList.appendChild(li);
+                });
+            }
         }
     }
 
@@ -316,56 +334,64 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    addTaskBtn.addEventListener('click', () => {
-        const taskText = newTaskInput.value.trim();
-        const selectedCategory = taskCategorySelect.value;
-        if (taskText) {
-            addTask(taskText, selectedCategory, selectedDate);
-            newTaskInput.value = '';
-        } else {
-            alert('Please enter a task!');
-        }
-    });
-
-    addCustomCategoryBtn.addEventListener('click', () => {
-        const newCategory = customCategoryInput.value.trim();
-        if (newCategory) {
-            if (!customCategories.includes(newCategory)) {
-                customCategories.push(newCategory);
-                saveCustomCategories();
-                renderTasks(selectedDate);
-                customCategoryInput.value = '';
-                alert(`Custom category "${newCategory}" added!`);
+    if (addTaskBtn) { // Add null check for addTaskBtn
+        addTaskBtn.addEventListener('click', () => {
+            const taskText = newTaskInput.value.trim();
+            const selectedCategory = taskCategorySelect.value;
+            if (taskText) {
+                addTask(taskText, selectedCategory, selectedDate);
+                newTaskInput.value = '';
             } else {
-                alert('This category already exists!');
+                alert('Please enter a task!');
             }
-        } else {
-            alert('Please enter a custom category name!');
-        }
-    });
+        });
+    }
+
+    if (addCustomCategoryBtn) { // Add null check for addCustomCategoryBtn
+        addCustomCategoryBtn.addEventListener('click', () => {
+            const newCategory = customCategoryInput.value.trim();
+            if (newCategory) {
+                if (!customCategories.includes(newCategory)) {
+                    customCategories.push(newCategory);
+                    saveCustomCategories();
+                    renderTasks(selectedDate);
+                    customCategoryInput.value = '';
+                    alert(`Custom category "${newCategory}" added!`);
+                } else {
+                    alert('This category already exists!');
+                }
+            } else {
+                alert('Please enter a custom category name!');
+            }
+        });
+    }
 
     // --- Day Review ---
-    saveDayReviewBtn.addEventListener('click', () => {
-        if (!tasks[selectedDate]) {
-            tasks[selectedDate] = { study: [], homework: [], custom: {} };
-        }
-        tasks[selectedDate].review = {
-            weaknessImprovement: weaknessImprovement.value.trim(),
-            rating: dayRating.value
-        };
-        saveTasks();
-        alert('Day review saved!');
-        renderCalendar(currentMonth, currentYear);
-    });
+    if (saveDayReviewBtn) { // Add null check for saveDayReviewBtn
+        saveDayReviewBtn.addEventListener('click', () => {
+            if (!tasks[selectedDate]) {
+                tasks[selectedDate] = { study: [], homework: [], custom: {} };
+            }
+            tasks[selectedDate].review = {
+                weaknessImprovement: weaknessImprovement.value.trim(),
+                rating: dayRating.value
+            };
+            saveTasks();
+            alert('Day review saved!');
+            renderCalendar(currentMonth, currentYear);
+        });
+    }
 
     function loadDayReview(date) {
-        const dayData = tasks[date];
-        if (dayData && dayData.review) {
-            weaknessImprovement.value = dayData.review.weaknessImprovement;
-            dayRating.value = dayData.review.rating;
-        } else {
-            weaknessImprovement.value = '';
-            dayRating.value = 3;
+        if (weaknessImprovement && dayRating) { // Add null check for elements
+            const dayData = tasks[date];
+            if (dayData && dayData.review) {
+                weaknessImprovement.value = dayData.review.weaknessImprovement;
+                dayRating.value = dayData.review.rating;
+            } else {
+                weaknessImprovement.value = '';
+                dayRating.value = 3;
+            }
         }
     }
 
@@ -376,6 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentYear = new Date().getFullYear();
 
     function renderCalendar(month, year) {
+        if (!calendarDiv) return; // Add null check for calendarDiv
         calendarDiv.innerHTML = '';
 
         const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -445,73 +472,93 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         calendarDiv.appendChild(table);
 
-        document.getElementById('prevMonthBtn').onclick = () => {
-            currentMonth--;
-            if (currentMonth < 0) {
-                currentMonth = 11;
-                currentYear--;
-            }
-            renderCalendar(currentMonth, currentYear);
-        };
-
-        document.getElementById('nextMonthBtn').onclick = () => {
-            currentMonth++;
-            if (currentMonth > 11) {
-                currentMonth = 0;
-                currentYear++;
-            }
-            renderCalendar(currentMonth, currentYear);
-        };
+        const prevMonthBtn = document.getElementById('prevMonthBtn');
+        const nextMonthBtn = document.getElementById('nextMonthBtn');
+        if (prevMonthBtn) { // Add null check
+            prevMonthBtn.onclick = () => {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                renderCalendar(currentMonth, currentYear);
+            };
+        }
+        if (nextMonthBtn) { // Add null check
+            nextMonthBtn.onclick = () => {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                renderCalendar(currentMonth, currentYear);
+            };
+        }
     }
 
-    function selectCalendarDate(date) {
-        selectedDate = date;
-        renderTasks(selectedDate);
-        loadDayReview(selectedDate);
-        // We no longer display history in this section, it's for the separate page
-        document.getElementById('selected-day-history').innerHTML = '<p>Select a date with recorded history to view details in a new page.</p>';
-        renderCalendar(currentMonth, currentYear);
-    }
+    function selectCalendarDate(date) {
+        selectedDate = date;
+        renderTasks(selectedDate);
+        loadDayReview(selectedDate);
+        if (document.getElementById('selected-day-history')) { // Add null check
+            document.getElementById('selected-day-history').innerHTML = '<p>Select a date with recorded history to view details in a new page.</p>';
+        }
+        renderCalendar(currentMonth, currentYear);
+    }
 
-    // Function to open the history page
-    function openHistoryPage(date) {
-        // Store the selected date in session storage so history.js can retrieve it
-        sessionStorage.setItem('selectedHistoryDate', date);
-        window.open('history.html', '_blank'); // Open in a new tab/window
-    }
+    // Function to open the history page
+    function openHistoryPage(date) {
+        sessionStorage.setItem('selectedHistoryDate', date);
+        window.open('history.html', '_blank'); // Open in a new tab/window
+    }
 
-    // --- Mobile Responsiveness Toggling ---
-    // Added null checks to ensure elements exist before adding listeners
-    if (toggleNewsBtn && dailyNewsSection && calendarHistorySection) {
-        toggleNewsBtn.addEventListener('click', () => {
-            dailyNewsSection.classList.toggle('visible-mobile');
-            calendarHistorySection.classList.remove('visible-mobile');
-        });
-    }
+    // --- Mobile Responsiveness Toggling ---
+    // Added null checks to ensure elements exist before adding listeners
+    if (toggleNewsBtn && dailyNewsSection && calendarHistorySection) {
+        toggleNewsBtn.addEventListener('click', () => {
+            dailyNewsSection.classList.toggle('visible-mobile');
+            calendarHistorySection.classList.remove('visible-mobile');
+        });
+    }
 
-    if (toggleCalendarBtn && dailyNewsSection && calendarHistorySection) {
-        toggleCalendarBtn.addEventListener('click', () => {
-            calendarHistorySection.classList.toggle('visible-mobile');
-            dailyNewsSection.classList.remove('visible-mobile');
-        });
-    }
+    if (toggleCalendarBtn && dailyNewsSection && calendarHistorySection) {
+        toggleCalendarBtn.addEventListener('click', () => {
+            calendarHistorySection.classList.toggle('visible-mobile');
+            dailyNewsSection.classList.remove('visible-mobile');
+        });
+    }
 
-    // New: Event listeners for close buttons
-    if (closeNewsBtn && dailyNewsSection) {
-        closeNewsBtn.addEventListener('click', () => {
-            dailyNewsSection.classList.remove('visible-mobile');
-        });
-    }
+    // Event listeners for close buttons
+    if (closeNewsBtn && dailyNewsSection) {
+        closeNewsBtn.addEventListener('click', () => {
+            dailyNewsSection.classList.remove('visible-mobile');
+        });
+    }
 
-    if (closeCalendarBtn && calendarHistorySection) {
-        closeCalendarBtn.addEventListener('click', () => {
-            calendarHistorySection.classList.remove('visible-mobile');
-        });
-    }
+    if (closeCalendarBtn && calendarHistorySection) {
+        closeCalendarBtn.addEventListener('click', () => {
+            calendarHistorySection.classList.remove('visible-mobile');
+        });
+    }
 
-    // Initial renders
-    populateCategorySelect();
-    renderTasks(selectedDate);
-    loadDayReview(selectedDate);
-    renderCalendar(currentMonth, currentYear);
+    // --- Logout Logic (UPDATED) ---
+    if (logoutBtn) { // Ensure button exists before adding listener
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('userToken'); // Remove the token
+            localStorage.removeItem('username'); // Remove username
+            localStorage.removeItem('dailyTasks'); // Clear local tasks (important for user-specific data)
+            localStorage.removeItem('customCategories'); // Clear custom categories
+
+            alert('Logged out successfully!'); // Provide user feedback
+            window.location.href = 'login.html'; // Redirect to login page
+        });
+    }
+
+    // Initial renders (should be called only if user is authenticated)
+    // These calls are now inside the DOMContentLoaded, after the authentication check.
+    // If the user is not authenticated, the script returns early.
+    populateCategorySelect();
+    renderTasks(selectedDate);
+    loadDayReview(selectedDate);
+    renderCalendar(currentMonth, currentYear);
 });
