@@ -7,13 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return; // Stop further script execution on this page if not authenticated
     }
 
-    // Now, retrieve username as well (if needed for display, e.g., "Welcome, [username]!")
-    // We get username from localStorage as it's set during login.
+    // Now, retrieve username and userId from the token or local storage (if stored)
+    // For now, we are relying on username from local storage.
+    // In a full JWT implementation, we would decode the token to get userId.
     let userName = localStorage.getItem('username') || 'User'; 
-    
-    // --- REMOVED THE OLD "User Name Prompt" SECTION from here ---
-    // (It's no longer needed as username comes from login)
-
+    const backendBaseUrl = 'http://localhost:5000/api'; // Your backend server URL
 
     // Get references to elements
     const motivationLine = document.getElementById('motivation-line');
@@ -42,20 +40,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // New: Get references for close buttons and logout button
     const closeNewsBtn = document.getElementById('closeNewsBtn');
     const closeCalendarBtn = document.getElementById('closeCalendarBtn');
-    const logoutBtn = document.getElementById('logoutBtn'); // Reference to the logout button
+    const logoutBtn = document.getElementById('logoutBtn');
 
 
     // --- Dark Mode Logic ---
     const currentMode = localStorage.getItem('theme') || 'light';
     if (currentMode === 'dark') {
         body.classList.add('dark-mode');
-        darkModeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+        if (darkModeToggle) darkModeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
     } else {
         body.classList.remove('dark-mode');
-        darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+        if (darkModeToggle) darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
     }
 
-    if (darkModeToggle) { // Ensure button exists before adding listener
+    if (darkModeToggle) {
         darkModeToggle.addEventListener('click', () => {
             body.classList.toggle('dark-mode');
             if (body.classList.contains('dark-mode')) {
@@ -79,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentMotivationIndex = 0;
 
     function updateMotivationLine() {
-        if (motivationLine) { // Add null check for motivationLine
+        if (motivationLine) {
             motivationLine.textContent = motivations[currentMotivationIndex];
             currentMotivationIndex = (currentMotivationIndex + 1) % motivations.length;
         }
@@ -89,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Daily News Section (Placeholder) ---
     function fetchDailyNews() {
-        if (newsContent) { // Add null check for newsContent
+        if (newsContent) {
             newsContent.innerHTML = `
                 <p><strong><i class="fas fa-arrow-right"></i> Tech:</strong> AI integration in everyday apps is on the rise.</p>
                 <p><strong><i class="fas fa-arrow-right"></i> Economy:</strong> Global markets show cautious optimism this week.</p>
@@ -100,64 +98,88 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     fetchDailyNews();
 
-    // --- Task Management ---
-    // Note: Tasks are still stored by date for now, but will eventually be user-specific from backend
-    let tasks = JSON.parse(localStorage.getItem('dailyTasks')) || {};
-    let customCategories = JSON.parse(localStorage.getItem('customCategories')) || [];
+    // --- Task Management (MODIFIED TO INTERACT WITH BACKEND) ---
+    // NO LONGER using localStorage.getItem('dailyTasks') directly for fetching.
+    // Tasks will be fetched from the backend for the selectedDate.
 
-    function saveTasks() {
-        localStorage.setItem('dailyTasks', JSON.stringify(tasks));
-    }
+    // No longer need saveTasks() as tasks are saved via API
+    // No longer need loadDayReview() as review is fetched via API (or handled separately)
 
-    function saveCustomCategories() {
-        localStorage.setItem('customCategories', JSON.stringify(customCategories));
-        populateCategorySelect();
-    }
-
-    function populateCategorySelect() {
-        if (taskCategorySelect) { // Add null check for taskCategorySelect
-            const existingCustomOptions = taskCategorySelect.querySelectorAll('option[value]:not([value="study"]):not([value="homework"])');
-            existingCustomOptions.forEach(option => option.remove());
-
-            customCategories.forEach(category => {
-                const option = document.createElement('option');
-                option.value = category;
-                option.textContent = category;
-                taskCategorySelect.appendChild(option);
+    // Function to fetch tasks from the backend
+    async function fetchTasksFromBackend(date) {
+        try {
+            const response = await fetch(`${backendBaseUrl}/tasks?date=${date}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}` // Send JWT token for authentication
+                }
             });
+
+            if (!response.ok) {
+                if (response.status === 401) { // Token expired or invalid
+                    alert('Session expired. Please log in again.');
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                    return [];
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const tasksData = await response.json();
+            // Group tasks by category for rendering
+            const groupedTasks = { study: [], homework: [], custom: {} };
+            tasksData.forEach(task => {
+                if (task.category === 'study') groupedTasks.study.push(task);
+                else if (task.category === 'homework') groupedTasks.homework.push(task);
+                else {
+                    if (!groupedTasks.custom[task.customCategoryName || task.category]) {
+                        groupedTasks.custom[task.customCategoryName || task.category] = [];
+                    }
+                    groupedTasks.custom[task.customCategoryName || task.category].push(task);
+                }
+            });
+            return groupedTasks;
+        } catch (error) {
+            console.error('Error fetching tasks from backend:', error);
+            // alert('Failed to load tasks. Please try again.'); // Consider showing a less intrusive message
+            return { study: [], homework: [], custom: {} }; // Return empty tasks on error
         }
     }
 
-    function renderTasks(date) {
-        const todayTasks = tasks[date] || {
-            study: [],
-            homework: [],
-            custom: {}
-        };
+
+    // Function to render tasks fetched from backend
+    async function renderTasks(date) {
+        const todayTasks = await fetchTasksFromBackend(date); // Fetch from backend
 
         if (studyTasksList) studyTasksList.innerHTML = '';
         if (homeworkTasksList) homeworkTasksList.innerHTML = '';
         if (customTaskSections) customTaskSections.innerHTML = '';
         if (allDailyTasksList) allDailyTasksList.innerHTML = '';
 
-        if (studyTasksList) { // Check if element exists
+        // Render Study Tasks
+        if (studyTasksList) {
             if (todayTasks.study.length === 0) {
                 studyTasksList.innerHTML = '<li class="no-task-message">No study tasks for today.</li>';
             } else {
-                todayTasks.study.forEach(task => addTaskToDOM(task, studyTasksList, 'study', date));
+                todayTasks.study.forEach(task => addTaskToDOM(task, studyTasksList, task.category, date));
             }
         }
 
-        if (homeworkTasksList) { // Check if element exists
+        // Render Home Work Tasks
+        if (homeworkTasksList) {
             if (todayTasks.homework.length === 0) {
                 homeworkTasksList.innerHTML = '<li class="no-task-message">No homework tasks for today.</li>';
             } else {
-                todayTasks.homework.forEach(task => addTaskToDOM(task, homeworkTasksList, 'homework', date));
+                todayTasks.homework.forEach(task => addTaskToDOM(task, homeworkTasksList, task.category, date));
             }
         }
         
-        if (customTaskSections) { // Check if element exists before adding content
-            customCategories.forEach(category => {
+        // Render Custom Categories and their tasks
+        // Fetch custom categories from local storage as they are not user specific yet
+        // A future enhancement would be to store custom categories in the backend per user
+        customCategories.forEach(category => {
+            if (customTaskSections) {
                 const categoryDiv = document.createElement('div');
                 categoryDiv.classList.add('task-category-item');
                 categoryDiv.innerHTML = `
@@ -173,47 +195,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const customTaskList = categoryDiv.querySelector('ul');
                 const categoryTasks = todayTasks.custom[category] || [];
-                if (customTaskList) { // Check before setting innerHTML
+                if (customTaskList) {
                     if (categoryTasks.length === 0) {
                         customTaskList.innerHTML = `<li class="no-task-message">No tasks in ${category} category.</li>`;
                     } else {
-                        categoryTasks.forEach(task => addTaskToDOM(task, customTaskList, category, date));
+                        categoryTasks.forEach(task => addTaskToDOM(task, customTaskList, task.category, date));
                     }
                 }
-            });
-
-            document.querySelectorAll('.add-task-to-custom-btn').forEach(button => {
-                button.onclick = (e) => {
-                    const category = e.currentTarget.dataset.category;
-                    const input = e.currentTarget.previousElementSibling;
-                    const taskText = input.value.trim();
-                    if (taskText) {
-                        addTask(taskText, category, date);
-                        input.value = '';
-                    }
-                };
-            });
-
-            document.querySelectorAll('.delete-custom-category-btn').forEach(button => {
-                button.onclick = (e) => {
-                    const categoryToDelete = e.currentTarget.dataset.category;
-                    if (confirm(`Are you sure you want to delete the category "${categoryToDelete}" and all its tasks?`)) {
-                        deleteCustomCategory(categoryToDelete);
-                    }
-                };
-            });
-        } // End if customTaskSections exists
-
-        const allTasksForOverview = [];
-        if (todayTasks.study) allTasksForOverview.push(...todayTasks.study);
-        if (todayTasks.homework) allTasksForOverview.push(...todayTasks.homework);
-        if (todayTasks.custom) {
-            for (const category in todayTasks.custom) {
-                allTasksForOverview.push(...todayTasks.custom[category]);
             }
-        }
+        });
 
-        if (allDailyTasksList) { // Check if element exists
+        document.querySelectorAll('.add-task-to-custom-btn').forEach(button => {
+            button.onclick = (e) => {
+                const category = e.currentTarget.dataset.category;
+                const input = e.currentTarget.previousElementSibling;
+                const taskText = input.value.trim();
+                if (taskText) {
+                    addTask(taskText, category, date);
+                    input.value = '';
+                }
+            };
+        });
+
+        document.querySelectorAll('.delete-custom-category-btn').forEach(button => {
+            button.onclick = (e) => {
+                const categoryToDelete = e.currentTarget.dataset.category;
+                if (confirm(`Are you sure you want to delete the category "${categoryToDelete}"? This will only remove the category from your local list.`)) { // Clarify that it's local
+                    deleteCustomCategory(categoryToDelete);
+                }
+            };
+        });
+
+        // Consolidate all tasks for overview
+        const allTasksForOverview = [
+            ...todayTasks.study, 
+            ...todayTasks.homework, 
+            ...Object.values(todayTasks.custom).flat()
+        ];
+
+        if (allDailyTasksList) {
             if (allTasksForOverview.length === 0) {
                 allDailyTasksList.innerHTML = '<li class="no-task-message">No tasks added for today yet.</li>';
             } else {
@@ -229,26 +249,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function addTask(taskText, category, date) {
-        if (!tasks[date]) {
-            tasks[date] = { study: [], homework: [], custom: {} };
-        }
-        if (category === 'study') {
-            tasks[date].study.push({ text: taskText, completed: false });
-        } else if (category === 'homework') {
-            tasks[date].homework.push({ text: taskText, completed: false });
-        } else {
-            if (!tasks[date].custom[category]) {
-                tasks[date].custom[category] = [];
+
+    // Function to add a task (MODIFIED TO SEND TO BACKEND)
+    async function addTask(taskText, category, date) {
+        const customCatName = (category !== 'study' && category !== 'homework') ? category : undefined;
+        
+        try {
+            const response = await fetch(`${backendBaseUrl}/tasks`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}` // Send token
+                },
+                body: JSON.stringify({
+                    text: taskText,
+                    category: (customCatName ? 'custom' : category), // Ensure category is 'custom' if it's a custom name
+                    customCategoryName: customCatName,
+                    date: date
+                })
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    alert('Session expired. Please log in again.');
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-            tasks[date].custom[category].push({ text: taskText, completed: false });
+
+            const newTask = await response.json();
+            alert('Task added successfully!'); // Confirmation
+            renderTasks(selectedDate); // Re-render tasks for the current date
+            renderCalendar(currentMonth, currentYear); // Update calendar if needed (e.g., has-history class)
+
+        } catch (error) {
+            console.error('Error adding task:', error);
+            alert('Failed to add task. Please try again.');
         }
-        saveTasks();
-        renderTasks(selectedDate);
     }
 
+    // Function to render task in DOM (used for both local and fetched tasks)
     function addTaskToDOM(task, listElement, category, date) {
         const li = document.createElement('li');
+        li.dataset.taskId = task._id; // Store MongoDB Task ID on the element
         
         const taskContentDiv = document.createElement('div');
         taskContentDiv.classList.add('task-content');
@@ -256,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.checked = task.completed;
-        checkbox.onchange = () => toggleTaskComplete(task.text, category, date);
+        checkbox.onchange = () => toggleTaskComplete(task._id, task.completed, date); // Pass task ID
         taskContentDiv.appendChild(checkbox);
 
         const taskTextSpan = document.createElement('span');
@@ -273,73 +317,96 @@ document.addEventListener('DOMContentLoaded', () => {
         const deleteBtn = document.createElement('button');
         deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
         deleteBtn.title = 'Delete Task';
-        deleteBtn.onclick = () => deleteTask(task.text, category, date);
+        deleteBtn.onclick = () => deleteTask(task._id, date); // Pass task ID
 
         actionsDiv.appendChild(deleteBtn);
         
         li.appendChild(taskContentDiv);
         li.appendChild(actionsDiv);
-        listElement.appendChild(li);
+        if (listElement) listElement.appendChild(li); // Null check
     }
 
-    function toggleTaskComplete(taskText, category, date) {
-        let taskList;
-        if (category === 'study') {
-            taskList = tasks[date].study;
-        } else if (category === 'homework') {
-            taskList = tasks[date].homework;
-        } else {
-            taskList = tasks[date].custom[category];
-        }
+    // Function to toggle task complete status (MODIFIED TO SEND TO BACKEND)
+    async function toggleTaskComplete(taskId, currentStatus, date) {
+        try {
+            const response = await fetch(`${backendBaseUrl}/tasks/${taskId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}` // Send token
+                },
+                body: JSON.stringify({ completed: !currentStatus }) // Toggle status
+            });
 
-        const task = taskList.find(t => t.text === taskText);
-        if (task) {
-            task.completed = !task.completed;
-            saveTasks();
-            renderTasks(selectedDate);
+            if (!response.ok) {
+                if (response.status === 401) {
+                    alert('Session expired. Please log in again.');
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            renderTasks(date); // Re-render tasks for the current date
+            renderCalendar(currentMonth, currentYear); // Update calendar if needed
+
+        } catch (error) {
+            console.error('Error toggling task complete:', error);
+            alert('Failed to update task status. Please try again.');
         }
     }
 
-    function deleteTask(taskText, category, date) {
+    // Function to delete a task (MODIFIED TO SEND TO BACKEND)
+    async function deleteTask(taskId, date) {
         if (!confirm('Are you sure you want to delete this task?')) return;
 
-        let taskList;
-        if (category === 'study') {
-            taskList = tasks[date].study;
-            tasks[date].study = taskList.filter(t => t.text !== taskText);
-        } else if (category === 'homework') {
-            taskList = tasks[date].homework;
-            tasks[date].homework = taskList.filter(t => t.text !== taskText);
-        } else {
-            taskList = tasks[date].custom[category];
-            tasks[date].custom[category] = taskList.filter(t => t.text !== taskText);
-        }
-        saveTasks();
-        renderTasks(selectedDate);
-    }
+        try {
+            const response = await fetch(`${backendBaseUrl}/tasks/${taskId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${userToken}` // Send token
+                }
+            });
 
-    function deleteCustomCategory(categoryToDelete) {
-        customCategories = customCategories.filter(cat => cat !== categoryToDelete);
-        saveCustomCategories();
-
-        for (const date in tasks) {
-            if (tasks[date].custom && tasks[date].custom[categoryToDelete]) {
-                delete tasks[date].custom[categoryToDelete];
+            if (!response.ok) {
+                if (response.status === 401) {
+                    alert('Session expired. Please log in again.');
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        }
-        saveTasks();
 
-        renderTasks(selectedDate);
-        alert(`Category "${categoryToDelete}" deleted successfully.`);
+            alert('Task deleted successfully!');
+            renderTasks(date); // Re-render tasks for the current date
+            renderCalendar(currentMonth, currentYear); // Update calendar if needed
+
+        } catch (error) {
+            console.error('Error deleting task:', error);
+            alert('Failed to delete task. Please try again.');
+        }
+    }
+
+    // Function to delete a custom category (still local as categories are not in backend yet)
+    function deleteCustomCategory(categoryToDelete) {
+        // This only removes the category from local storage and the dropdown.
+        // If categories were stored in the backend, this would need an API call too.
+        customCategories = customCategories.filter(cat => cat !== categoryToDelete);
+        localStorage.setItem('customCategories', JSON.stringify(customCategories)); // Save updated local categories
+        populateCategorySelect();
+        alert(`Category "${categoryToDelete}" deleted from local list.`);
+        renderTasks(selectedDate); // Re-render to reflect removal
     }
 
 
-    if (addTaskBtn) { // Add null check for addTaskBtn
+    if (addTaskBtn) {
         addTaskBtn.addEventListener('click', () => {
             const taskText = newTaskInput.value.trim();
             const selectedCategory = taskCategorySelect.value;
             if (taskText) {
-                addTask(taskText, selectedCategory, selectedDate);
+                // Determine custom category name if selectedCategory is 'custom'
+                const catName = (selectedCategory !== 'study' && selectedCategory !== 'homework') ? selectedCategory : undefined;
+                addTask(taskText, selectedCategory, selectedDate); // Send to backend
                 newTaskInput.value = '';
             } else {
                 alert('Please enter a task!');
@@ -347,16 +414,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (addCustomCategoryBtn) { // Add null check for addCustomCategoryBtn
+    if (addCustomCategoryBtn) {
         addCustomCategoryBtn.addEventListener('click', () => {
             const newCategory = customCategoryInput.value.trim();
             if (newCategory) {
                 if (!customCategories.includes(newCategory)) {
                     customCategories.push(newCategory);
-                    saveCustomCategories();
+                    localStorage.setItem('customCategories', JSON.stringify(customCategories)); // Save custom category locally
+                    populateCategorySelect();
                     renderTasks(selectedDate);
                     customCategoryInput.value = '';
-                    alert(`Custom category "${newCategory}" added!`);
+                    alert(`Custom category "${newCategory}" added to local list!`);
                 } else {
                     alert('This category already exists!');
                 }
@@ -366,28 +434,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Day Review ---
-    if (saveDayReviewBtn) { // Add null check for saveDayReviewBtn
+    // --- Day Review (Still Local, could be moved to Backend later) ---
+    if (saveDayReviewBtn) {
         saveDayReviewBtn.addEventListener('click', () => {
-            if (!tasks[selectedDate]) {
-                tasks[selectedDate] = { study: [], homework: [], custom: {} };
-            }
-            tasks[selectedDate].review = {
+            // Day reviews are currently stored in local tasks object, linked by date.
+            // If reviews need to be user-specific and persistent, they need their own backend model/routes.
+            let dayReviews = JSON.parse(localStorage.getItem('dayReviews')) || {};
+            dayReviews[selectedDate] = {
                 weaknessImprovement: weaknessImprovement.value.trim(),
                 rating: dayRating.value
             };
-            saveTasks();
-            alert('Day review saved!');
+            localStorage.setItem('dayReviews', JSON.stringify(dayReviews));
+            alert('Day review saved locally!');
             renderCalendar(currentMonth, currentYear);
         });
     }
 
     function loadDayReview(date) {
-        if (weaknessImprovement && dayRating) { // Add null check for elements
-            const dayData = tasks[date];
-            if (dayData && dayData.review) {
-                weaknessImprovement.value = dayData.review.weaknessImprovement;
-                dayRating.value = dayData.review.rating;
+        if (weaknessImprovement && dayRating) {
+            const dayReviews = JSON.parse(localStorage.getItem('dayReviews')) || {};
+            const reviewData = dayReviews[date];
+            if (reviewData) {
+                weaknessImprovement.value = reviewData.weaknessImprovement;
+                dayRating.value = reviewData.rating;
             } else {
                 weaknessImprovement.value = '';
                 dayRating.value = 3;
@@ -396,13 +465,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // --- Live Calendar & History ---
+    // --- Live Calendar & History (MODIFIED TO REFLECT BACKEND TASK DATA) ---
     let selectedDate = new Date().toISOString().slice(0, 10);
     let currentMonth = new Date().getMonth();
     let currentYear = new Date().getFullYear();
 
-    function renderCalendar(month, year) {
-        if (!calendarDiv) return; // Add null check for calendarDiv
+    async function renderCalendar(month, year) {
+        if (!calendarDiv) return;
         calendarDiv.innerHTML = '';
 
         const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -446,10 +515,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (date === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
                         cell.classList.add('today');
                     }
-                    // Check if any data exists for this date to apply 'has-history'
-                    if (tasks[formattedCellDate] && (Object.keys(tasks[formattedCellDate].custom).length > 0 || tasks[formattedCellDate].study.length > 0 || tasks[formattedCellDate].homework.length > 0 || (tasks[formattedCellDate].review && (tasks[formattedCellDate].review.weaknessImprovement || tasks[formattedCellDate].review.rating)))) {
-                        cell.classList.add('has-history');
+
+                    // Check if tasks exist for this date from backend (or reviews from local storage for now)
+                    const tasksForDate = await fetchTasksFromBackend(formattedCellDate);
+                    const dayReviews = JSON.parse(localStorage.getItem('dayReviews')) || {};
+                    const reviewForDate = dayReviews[formattedCellDate];
+
+                    if (tasksForDate.study.length > 0 || tasksForDate.homework.length > 0 || Object.keys(tasksForDate.custom).length > 0 || reviewForDate) {
+                         cell.classList.add('has-history');
                     }
+                    
                     if (formattedCellDate === selectedDate) {
                         cell.classList.add('selected-day');
                     }
@@ -474,7 +549,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const prevMonthBtn = document.getElementById('prevMonthBtn');
         const nextMonthBtn = document.getElementById('nextMonthBtn');
-        if (prevMonthBtn) { // Add null check
+        if (prevMonthBtn) {
             prevMonthBtn.onclick = () => {
                 currentMonth--;
                 if (currentMonth < 0) {
@@ -484,7 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderCalendar(currentMonth, currentYear);
             };
         }
-        if (nextMonthBtn) { // Add null check
+        if (nextMonthBtn) {
             nextMonthBtn.onclick = () => {
                 currentMonth++;
                 if (currentMonth > 11) {
@@ -496,11 +571,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function selectCalendarDate(date) {
+    async function selectCalendarDate(date) { // Made async to await fetchTasks
         selectedDate = date;
-        renderTasks(selectedDate);
-        loadDayReview(selectedDate);
-        if (document.getElementById('selected-day-history')) { // Add null check
+        await renderTasks(selectedDate); // Await tasks render
+        loadDayReview(selectedDate); // Load local review
+        if (document.getElementById('selected-day-history')) {
             document.getElementById('selected-day-history').innerHTML = '<p>Select a date with recorded history to view details in a new page.</p>';
         }
         renderCalendar(currentMonth, currentYear);
@@ -513,7 +588,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Mobile Responsiveness Toggling ---
-    // Added null checks to ensure elements exist before adding listeners
     if (toggleNewsBtn && dailyNewsSection && calendarHistorySection) {
         toggleNewsBtn.addEventListener('click', () => {
             dailyNewsSection.classList.toggle('visible-mobile');
@@ -542,12 +616,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Logout Logic (UPDATED) ---
-    if (logoutBtn) { // Ensure button exists before adding listener
+    if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
             localStorage.removeItem('userToken'); // Remove the token
             localStorage.removeItem('username'); // Remove username
-            localStorage.removeItem('dailyTasks'); // Clear local tasks (important for user-specific data)
-            localStorage.removeItem('customCategories'); // Clear custom categories
+            localStorage.removeItem('dailyTasks'); // Remove old local tasks (no longer needed)
+            localStorage.removeItem('customCategories'); // Remove old local categories
+            localStorage.removeItem('dayReviews'); // Remove old local day reviews
 
             alert('Logged out successfully!'); // Provide user feedback
             window.location.href = 'login.html'; // Redirect to login page
@@ -558,7 +633,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // These calls are now inside the DOMContentLoaded, after the authentication check.
     // If the user is not authenticated, the script returns early.
     populateCategorySelect();
-    renderTasks(selectedDate);
-    loadDayReview(selectedDate);
-    renderCalendar(currentMonth, currentYear);
+    renderTasks(selectedDate); // Initial fetch and render for today's tasks
+    loadDayReview(selectedDate); // Load local review for today
+    renderCalendar(currentMonth, currentYear); // Render calendar initially
 });
