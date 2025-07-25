@@ -1,3 +1,4 @@
+
 :root {
     /* Light Mode Variables */
     --primary-color: #4CAF50; /* Green */
@@ -142,56 +143,132 @@ body.dark-mode .all-tasks-section h3 {
 
 body.dark-mode .day-review {
     background-color: var(--dark-bg-review);
-    padding: 20px;
-    border-radius: var(--border-radius);
-    border: 1px solid #bbdefb;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+    border-color: var(--dark-border-color);
+}
+body.dark-mode .day-review button {
+    background-color: var(--dark-primary-color);
+}
+body.dark-mode .day-review button:hover {
+    background-color: #72af75;
 }
 
-.day-review textarea {
-    width: calc(100% - 22px);
-    height: 120px;
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    margin-bottom: 15px;
-    resize: vertical;
-    font-size: 1em;
-    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+body.dark-mode #calendar {
+    background-color: var(--dark-element-bg);
+    border-color: var(--dark-border-color);
+}
+body.dark-mode #calendar th, body.dark-mode #calendar td {
+    border-color: #3a3a3a;
+    color: var(--dark-text-dark);
+}
+body.dark-mode #calendar th {
+    background-color: #333;
+}
+body.dark-mode #calendar td.today {
+    background-color: var(--dark-accent-color);
+    color: var(--text-dark); /* Keep dark text for today */
+}
+body.dark-mode #calendar td.has-history {
+    background-color: #4CAF50; /* Original primary for history in dark mode */
+    color: var(--text-light);
+}
+body.dark-mode #calendar td.selected-day {
+    background-color: var(--dark-secondary-color);
+    color: var(--dark-text-light);
+}
+body.dark-mode #calendar-header span {
+    color: var(--dark-secondary-color);
+}
+body.dark-mode #calendar-header button {
+    color: var(--dark-secondary-color);
 }
 
-.rating-section {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-    gap: 10px;
+body.dark-mode #history-content {
+    background-color: var(--dark-element-bg);
+    border-color: var(--dark-border-color);
 }
-
-.rating-section label {
-    color: #555;
-    font-weight: bold;
-    transition: color 0.3s;
+body.dark-mode #history-content h3 {
+    color: var(--dark-secondary-color);
+    border-bottom-color: var(--dark-border-color);
 }
-
-.dark-mode .rating-section label {
+body.dark-mode #selected-day-history ul li::before {
+    color: var(--dark-primary-color);
+}
+body.dark-mode #selected-day-history ul li {
     color: var(--dark-text-dark);
 }
 
-.rating-section input[type="number"] {
-    width: 70px;
-    padding: 8px;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    font-size: 1em;
-    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+
+/* General Styles (applies to both modes unless overridden) */
+header {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    padding: 10px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.day-review button {
-    background-color: var(--primary-color);
+#motivation-line {
+    font-size: 1.2em;
+    font-style: italic;
+    white-space: nowrap;
+    animation: marquee 25s linear infinite;
+    padding: 5px 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+.mode-toggle-btn {
+    background-color: #607d8b; /* Blue-grey */
     color: white;
     border: none;
-    padding: 12px 20px;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+.mode-toggle-btn:hover {
+    background-color: #455a64;
+}
+.dark-mode .mode-toggle-btn {
+    background-color: #4a4a4a;
+}
+.dark-mode .mode-toggle-btn:hover {
+    background-color: #616161;
+}
+
+
+/* Mobile Navigation Buttons */
+.mobile-nav-buttons {
+    display: none; /* Hidden by default, shown on mobile */
+    justify-content: space-around;
+    padding: 10px;
+    background-color: #3f51b5;
+    box-shadow: var(--shadow);
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 10px;
+}
+
+.mobile-nav-btn {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 1em;
@@ -201,151 +278,33 @@ body.dark-mode .day-review {
     transition: background-color 0.3s ease;
 }
 
-.day-review button:hover {
-    background-color: #43A047;
+.mobile-nav-btn:hover {
+    background-color: #1976D2;
 }
 
-/* Calendar Styling */
-#calendar {
-    margin-top: 20px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 15px;
-    background-color: var(--element-bg);
-    text-align: center;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
-}
 
-#calendar table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-#calendar th, #calendar td {
-    padding: 8px;
-    border: 1px solid #eee;
-    text-align: center;
-    vertical-align: middle;
-    font-size: 0.9em;
-    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
-}
-
-#calendar th {
-    background-color: #f2f2f2;
-    color: var(--text-dark);
-}
-
-#calendar td {
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-#calendar td:hover {
-    background-color: #e0e0e0;
-}
-
-#calendar td.today {
-    background-color: var(--accent-color);
-    color: var(--text-dark);
-    font-weight: bold;
-    border-radius: 50%;
-    position: relative;
-    z-index: 1;
-}
-
-#calendar td.has-history {
-    background-color: #c8e6c9;
-    font-weight: 500;
-}
-
-#calendar td.selected-day {
-    background-color: var(--secondary-color);
-    color: white;
-    font-weight: bold;
-    border-radius: 50%;
-}
-
-#calendar-header {
+main {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    font-size: 1.1em;
-    font-weight: bold;
-    color: var(--secondary-color);
-    transition: color 0.3s;
+    flex: 1;
+    padding: 20px;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
-#calendar-header button {
-    background: none;
-    border: none;
-    font-size: 1.4em;
-    cursor: pointer;
-    color: var(--secondary-color);
-    transition: color 0.3s ease;
-}
-
-#calendar-header button:hover {
-    color: #1976D2;
-}
-
-#history-content {
-    margin-top: 25px;
-    background-color: var(--element-bg);
-    padding: 15px;
+aside.sidebar {
+    background-color: var(--bg-medium);
+    padding: 20px;
     border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+    box-shadow: var(--shadow);
+    flex: 0 0 28%;
+    max-width: 28%;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
-#history-content h3 {
-    color: var(--secondary-color);
-    border-bottom: 1px dashed var(--border-color);
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-    transition: color 0.3s, border-bottom-color 0.3s;
-}
-
-#selected-day-history h4 {
-    color: var(--text-dark);
-    margin-bottom: 10px;
-}
-
-#selected-day-history ul {
-    list-style: none;
-    padding-left: 0;
-}
-
-#selected-day-history ul li {
-    margin-bottom: 5px;
-    padding-left: 1.2em;
-    position: relative;
-    transition: color 0.3s;
-}
-
-#selected-day-history ul li::before {
-    content: "•";
-    color: var(--primary-color);
-    position: absolute;
-    left: 0;
-    font-weight: bold;
-    transition: color 0.3s;
-}
-.dark-mode #selected-day-history ul li::before {
-    color: var(--dark-primary-color);
-}
-
-#selected-day-history p {
-    line-height: 1.5;
-    margin-bottom: 8px;
-    transition: color 0.3s;
-}
-
-
-/* Media Queries for Responsiveness */
+/* --- MODIFIED MEDIA QUERY BLOCK --- */
 @media (max-width: 1024px) {
     main {
         flex-direction: column;
@@ -358,8 +317,6 @@ body.dark-mode .day-review {
         max-width: 95%;
         width: 100%;
         margin-bottom: 20px;
-        /* Default display for sidebars on mobile, will be overridden by .visible-mobile */
-        display: none; /* ADDED this specific line here */
     }
 
     section#task-management {
@@ -383,9 +340,17 @@ body.dark-mode .day-review {
     .mobile-nav-buttons {
         display: flex;
     }
+
+    /* IMPORTANT CHANGE: This hides the sidebars by default on mobile. */
+    /* They will be shown by adding the 'visible-mobile' class via JavaScript. */
+    aside.sidebar:not(.visible-mobile) {
+        display: none;
+    }
 }
+/* --- END OF MODIFIED MEDIA QUERY BLOCK --- */
 
 
+/* --- NEW CSS RULE TO ADD AT THE END OF THE FILE --- */
 /* This rule makes the sidebar visible when toggled on mobile */
 aside.sidebar.visible-mobile {
     display: flex !important; /* Force display flex when active */
@@ -409,9 +374,10 @@ body.dark-mode aside.sidebar.visible-mobile {
     background-color: var(--dark-bg-medium);
     box-shadow: var(--dark-shadow);
 }
+/* --- END OF NEW CSS RULE --- */
 
 
-/* NEW CSS FOR CLOSE BUTTONS */
+/* --- NEW CSS FOR CLOSE BUTTONS --- */
 /* Add this anywhere outside of @media blocks, e.g., near the top or bottom of general styles */
 .close-btn {
     background: none;
@@ -427,7 +393,7 @@ body.dark-mode aside.sidebar.visible-mobile {
 }
 
 .close-btn:hover {
-    color: #c82333; /* गहरा लाल रंग जब मा우스 ऊपर हो */
+    color: #c82333; /* गहरा लाल रंग जब माउस ऊपर हो */
 }
 
 /* Dark mode में भी लाल रंग सुनिश्चित करें */
@@ -437,6 +403,7 @@ body.dark-mode .close-btn {
 body.dark-mode .close-btn:hover {
     color: #b73e3e; /* Dark mode में गहरा लाल */
 }
+/* --- END OF NEW CSS FOR CLOSE BUTTONS --- */
 
 
 @media (max-width: 768px) {
